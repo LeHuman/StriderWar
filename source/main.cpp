@@ -63,8 +63,8 @@ int main() {
 
         vy += gravity;
 
-        Fixed angleX = (Fixed)(joysticks.X1 - 3) / 8;
-        Fixed angleY = (Fixed)(joysticks.Y1 - 3) / 8;
+        Fixed angleX = (Fixed)(joysticks.playerA.x - 3) / 8;
+        Fixed angleY = (Fixed)(joysticks.playerA.y - 3) / 8;
 
         if (bounceX || bounceY) {
             Graphics::line(last[1][0], last[1][1], last[1][2], last[1][3], 0);
@@ -154,7 +154,7 @@ int main() {
             Graphics::line(last[1][0], last[1][1], last[1][2], last[1][3], 3);
         }
 
-        if (joysticks.A1 && !bullet) {
+        if (joysticks.playerA.fire && !bullet) {
             bullet = true;
             bx = x;
             by = y;
