@@ -2,80 +2,51 @@
 
 #include <math.h> // only for init
 
-Fixed FixedMath::sinTable[TRIG_RESOLUTION];
-uint8_t FixedMath::atan2Table[ATAN_TABLE_SIZE];
-Fixed FixedMath::sqrtLUT[LUT_RESOLUTION];
-Fixed FixedMath::logLUT[LUT_RESOLUTION];
+#include "generated_luts.hpp"
 
-void FixedMath::init() {
-    for (int i = 0; i < TRIG_RESOLUTION; ++i) {
-        float angle = (2.0f * 3.14159265f * i) / TRIG_RESOLUTION;
-        sinTable[i] = Fixed(sin(angle));
-    }
+static const float M_PI = 3.14159265f;
 
-    for (int i = 0; i < ATAN_TABLE_SIZE; ++i) {
-        float ratio = i / 16.0f;
-        float angle = atan(ratio); // radians
-        int index = (int)(angle * (TRIG_RESOLUTION / (2.0f * 3.1415926f)) + 0.5f);
-        atan2Table[i] = (uint8_t)index;
-    }
-
-    // sqrt LUT: sqrt(i/16.0)
-    for (int i = 0; i < LUT_RESOLUTION; ++i) {
-        float f = i / 16.0f;
-        sqrtLUT[i] = Fixed(sqrt(f));
-    }
-
-    // log LUT: log(i/16.0)
-    for (int i = 1; i < LUT_RESOLUTION; ++i) {
-        float f = i / 16.0f;
-        logLUT[i] = Fixed(log(f));
-    }
-    logLUT[0] = Fixed(0); // log(0) undefined, set to 0 or min
-}
-
-Fixed FixedMath::sin(uint8_t angle) {
+Fixed FixedMath::sin(uint16_t angle) {
     return sinTable[angle % TRIG_RESOLUTION];
 }
 
-Fixed FixedMath::cos(uint8_t angle) {
+Fixed FixedMath::cos(uint16_t angle) {
     return sinTable[(angle + TRIG_RESOLUTION / 4) % TRIG_RESOLUTION];
 }
 
 static inline Fixed fixed_abs(Fixed x) {
     return Fixed::fromRaw(x.raw() < 0 ? -x.raw() : x.raw());
 }
-
-uint8_t FixedMath::atan2(Fixed y, Fixed x) {
+uint16_t FixedMath::atan2(Fixed y, Fixed x) {
     if (x.raw() == 0 && y.raw() == 0)
         return 0;
 
     Fixed absY = fixed_abs(y);
     Fixed absX = fixed_abs(x);
 
-    Fixed ratio;
     bool yIsBigger = absY.raw() > absX.raw();
+    Fixed ratio = yIsBigger
+                      ? Fixed::fromRaw((absX.raw() << FIXED_SHIFT) / absY.raw())
+                      : Fixed::fromRaw((absY.raw() << FIXED_SHIFT) / absX.raw());
 
-    if (yIsBigger) {
-        ratio = Fixed::fromRaw((absX.raw() << FIXED_SHIFT) / absY.raw());
-    } else {
-        ratio = Fixed::fromRaw((absY.raw() << FIXED_SHIFT) / absX.raw());
+    int index = ratio.raw() << (ATAN2_LUT_BITS - FIXED_SHIFT);
+    if (index >= ATAN2_LUT_SIZE) {
+        index = ATAN2_LUT_SIZE - 1;
     }
 
-    int index = ratio.raw() >> 1; // convert 12.4 to 8.3: shift by 1
-    if (index >= ATAN_TABLE_SIZE)
-        index = ATAN_TABLE_SIZE - 1;
+    uint16_t baseAngle = atan2Table[index]; // range 0-65535 for 0-90°
 
-    uint8_t baseAngle = atan2Table[index];
+    static const uint16_t QUADRANT_ANGLE = ATAN2_LUT_SIZE / 4;
 
+    // Reflect based on quadrant
     if (x.raw() >= 0 && y.raw() >= 0) {
-        return yIsBigger ? 64 - baseAngle : baseAngle;
+        return yIsBigger ? (QUADRANT_ANGLE - baseAngle) : baseAngle;
     } else if (x.raw() < 0 && y.raw() >= 0) {
-        return yIsBigger ? 64 + baseAngle : 128 - baseAngle;
+        return yIsBigger ? (QUADRANT_ANGLE + baseAngle) : (2 * QUADRANT_ANGLE - baseAngle);
     } else if (x.raw() < 0 && y.raw() < 0) {
-        return yIsBigger ? 192 - baseAngle : 128 + baseAngle;
+        return yIsBigger ? (3 * QUADRANT_ANGLE - baseAngle) : (2 * QUADRANT_ANGLE + baseAngle);
     } else {
-        return yIsBigger ? 192 + baseAngle : 256 - baseAngle;
+        return yIsBigger ? (3 * QUADRANT_ANGLE + baseAngle) : (4 * QUADRANT_ANGLE - baseAngle);
     }
 }
 

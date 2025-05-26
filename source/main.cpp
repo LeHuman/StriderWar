@@ -21,7 +21,6 @@ static const Fixed Y_MIN = 0.0f;
 static const Fixed Y_MAX = 200.0f;
 
 int main() {
-    FixedMath::init();
     Graphics::init();
 
     Joysticks joysticks(0x201);
@@ -34,7 +33,7 @@ int main() {
     const Fixed tail = 2.0f;
 
     const Fixed bullet_speed = 2.0f;
-    const Fixed bullet_tail = 0.5f;
+    const Fixed bullet_tail = 2.0f;
 
     const Fixed spark_dist = 5.0f;
     const Fixed spark_tail = -10.0f;
@@ -64,8 +63,8 @@ int main() {
 
         vy += gravity;
 
-        Fixed angleX = (Fixed)(joysticks.X1 - 3) / 4;
-        Fixed angleY = (Fixed)(joysticks.Y1 - 3) / 4;
+        Fixed angleX = (Fixed)(joysticks.X1 - 3) / 12;
+        Fixed angleY = (Fixed)(joysticks.Y1 - 3) / 12;
 
         if (bounceX || bounceY) {
             Graphics::line(last[1][0], last[1][1], last[1][2], last[1][3], 0);
@@ -169,8 +168,8 @@ int main() {
 
             bvx = vx * bullet_speed;
             bvy = vy * bullet_speed;
-            bullet_cmax = 16 - FixedMath::sqrt(bvx * bvx + bvy * bvy) / 2;
-            if (bullet_cmax > 16 || bullet_cmax == 0) {
+            bullet_cmax = 12 - FixedMath::sqrt(bvx * bvx + bvy * bvy) / 2;
+            if (bullet_cmax > 12 || bullet_cmax == 0) {
                 bullet_cmax = 1;
             }
         }
