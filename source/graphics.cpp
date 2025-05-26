@@ -12,18 +12,18 @@ void Graphics::init() {
     _selectpalette(2);
 }
 
-void Graphics::pixel(int x, int y, unsigned char color) {
+void Graphics::pixel(int x, int y, uint8_t color) {
     _setcolor(color);
     _setpixel(x, y);
 }
 
-void Graphics::line(int x0, int y0, int x1, int y1, unsigned char color) {
+void Graphics::line(int x0, int y0, int x1, int y1, uint8_t color) {
     _setcolor(color);
     _moveto(x0, y0);
     _lineto(x1, y1);
 }
 
-void Graphics::text(int x, int y, char *string, unsigned char color) {
+void Graphics::text(int x, int y, char *string, uint8_t color) {
     _setcolor(color);
     _grtext(x, y, string);
 }
