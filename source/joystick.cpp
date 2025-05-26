@@ -9,9 +9,9 @@ enum PortBit {
     X2 = 1U << 2U,
     Y2 = 1U << 3U,
     A1 = 1U << 4U,
-    B1 = 1U << 4U,
-    A2 = 1U << 4U,
-    B2 = 1U << 4U,
+    B1 = 1U << 5U,
+    A2 = 1U << 6U,
+    B2 = 1U << 7U,
     ALL_AXIS = X1 | Y1 | X2 | Y2,
 };
 
