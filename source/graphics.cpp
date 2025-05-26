@@ -7,7 +7,7 @@
 
 #include "graph.h"
 
-void Graphics::setVideoMode(unsigned char mode) {
+void Graphics::init() {
     _setvideomode(_MRES4COLOR);
     _selectpalette(2);
 }

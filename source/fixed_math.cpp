@@ -2,6 +2,11 @@
 
 #include <math.h> // only for init
 
+Fixed FixedMath::sinTable[TRIG_RESOLUTION];
+uint8_t FixedMath::atan2Table[ATAN_TABLE_SIZE];
+Fixed FixedMath::sqrtLUT[LUT_RESOLUTION];
+Fixed FixedMath::logLUT[LUT_RESOLUTION];
+
 void FixedMath::init() {
     for (int i = 0; i < TRIG_RESOLUTION; ++i) {
         float angle = (2.0f * 3.14159265f * i) / TRIG_RESOLUTION;

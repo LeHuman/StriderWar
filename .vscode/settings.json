@@ -29,7 +29,11 @@
         "i86.h": "c",
         "cstdint": "cpp",
         "limits": "cpp",
-        "cassert": "cpp"
+        "cassert": "cpp",
+        "cstddef": "c",
+        "cstdlib": "c",
+        "cstring": "c",
+        "istream": "c"
     },
     "sonarlint.pathToCompileCommands": "${workspaceFolder}\\build\\compile_commands.json",
 }
