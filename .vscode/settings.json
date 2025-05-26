@@ -1,0 +1,35 @@
+{
+    "cmake.configureArgs": [
+        "-DCMAKE_CXX_COMPILER_WORKS=1",
+        "-DCMAKE_C_COMPILER_WORKS=1"
+    ],
+    "cmake.generator": "Ninja", //Comment this if you aren't using OpenWatcom compiler.
+    "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
+    "files.associations": {
+        "*.html": "html",
+        "*.def": "c",
+        "*.hpp": "cpp",
+        "iostream": "c",
+        "dos.h": "c",
+        "conio.h": "c",
+        "cstdio": "c",
+        "stdio.h": "c",
+        "ios": "c",
+        "ostream": "c",
+        "array": "c",
+        "vector": "cpp",
+        "iterator": "c",
+        "memory": "cpp",
+        "joystickapi.h": "c",
+        "graph2.h": "c",
+        "cmath": "cpp",
+        "graph.h": "c",
+        "memory.h": "c",
+        "corecrt_memory.h": "c",
+        "i86.h": "c",
+        "cstdint": "cpp",
+        "limits": "cpp",
+        "cassert": "cpp"
+    },
+    "sonarlint.pathToCompileCommands": "${workspaceFolder}\\build\\compile_commands.json",
+}

@@ -1,0 +1,27 @@
+{
+    "configurations": [
+        {
+            "name": "DOS16",
+            "includePath": [
+                "${workspaceFolder}/include/**",
+                "${workspaceFolder}/source/**",
+                "C:/WATCOM/h/**"
+            ],
+            "defines": [
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODE",
+                "__WATCOMC__",
+                "_M_I86",
+                "__DOS__",
+                "__MEDIUM__"
+            ],
+            "cStandard": "c89",
+            "cppStandard": "c++98",
+            "intelliSenseMode": "gcc-x86",
+            "configurationProvider": "ms-vscode.cmake-tools",
+            "compilerPath": "C:\\WATCOM\\binnt64\\wcc.exe"
+        }
+    ],
+    "version": 4
+}
