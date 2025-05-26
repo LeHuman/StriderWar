@@ -33,7 +33,8 @@
         "cstddef": "c",
         "cstdlib": "c",
         "cstring": "c",
-        "istream": "c"
+        "istream": "c",
+        "stdint.h": "c"
     },
     "sonarlint.pathToCompileCommands": "${workspaceFolder}\\build\\compile_commands.json",
 }

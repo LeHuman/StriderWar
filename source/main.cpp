@@ -28,20 +28,6 @@ static const Fixed tail_mult = 2.0f;
 static const Fixed bullet_speed = 2.0f;
 static const Fixed bullet_tail = 2.0f;
 
-// struct World {
-//     Fixed gravity;
-//     Fixed friction;
-//     Fixed bounce;
-//     Fixed tail_mult;
-
-//     World() {
-//         gravity = 0.045f;
-//         friction = 0.998f;
-//         bounce = -0.92f;
-//         tail_mult = 2.0f;
-//     }
-// };
-
 class Strider {
 private:
     Graphics::Line trail[4];
@@ -52,16 +38,11 @@ private:
     uint8_t draw_counter_limit;
     uint8_t draw_counter_max;
 
-    // static const int16_t vel_sat = 5;
-
 public:
     Fixed x;
     Fixed y;
     Fixed vx;
     Fixed vy;
-
-    // Fixed cvx;
-    // Fixed cvy;
 
     uint8_t color;
     bool enabled;
@@ -173,7 +154,6 @@ public:
 };
 
 struct Player {
-
     Strider ship;
     Strider bullets[2];
     uint8_t enabled_bullets;
