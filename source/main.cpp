@@ -160,14 +160,13 @@ struct Player {
 
     bool last_bullet;
     bool req_bullet;
-    int last_bcount;
 
     int bounced;
     Graphics::Line spark;
 
     const Joysticks::Player &input;
 
-    Player(Joysticks::Player &input) : enabled_bullets(0), input(input), req_bullet(false), last_bcount(0), bounced(0) {
+    Player(Joysticks::Player &input) : enabled_bullets(0), input(input), last_bullet(false), req_bullet(false), bounced(0) {
         ship.x = X_MAX / 2.0f;
         ship.y = Y_MAX / 2.0f;
         ship.enabled = true;
@@ -215,19 +214,24 @@ struct Player {
             spark.y1 = spark.y0 + (dy * spark_tail);
         }
 
+        bool fire = false;
+
+        if (req_bullet != last_bullet) {
+            fire = req_bullet;
+            last_bullet = req_bullet;
+        }
+
         for (size_t i = 0; i < sizeof(bullets) / sizeof(bullets[0]); i++) {
             Strider &bullet = bullets[i];
 
-            if (last_bcount == 0 && req_bullet && !bullet.enabled) {
-                last_bcount = 10;
-                ++enabled_bullets;
+            if (fire && !bullet.enabled) {
+                fire = false;
                 bullet.enabled = true;
+                ++enabled_bullets;
                 bullet.x = ship.x;
                 bullet.y = ship.y;
                 bullet.vx = ship.vx * bullet_speed;
                 bullet.vy = ship.vy * bullet_speed;
-            } else if (last_bcount > 0) {
-                --last_bcount;
             }
 
             bullet.step();
