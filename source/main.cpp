@@ -27,17 +27,17 @@ int main() {
 
     int count = 0;
 
-    const Fixed gravity = 0.185f;
-    const Fixed friction = 0.98f;
-    const Fixed bounce = -0.86f;
+    const Fixed gravity = 0.045f;
+    const Fixed friction = 0.999f;
+    const Fixed bounce = -0.92f;
     const Fixed tail = 2.0f;
 
     const Fixed bullet_speed = 2.0f;
     const Fixed bullet_tail = 2.0f;
 
-    const Fixed spark_dist = 5.0f;
-    const Fixed spark_tail = -10.0f;
-    const Fixed spark_deflect_rad = 0.5235988;
+    const Fixed spark_dist = 0.25f;
+    const Fixed spark_tail = -0.5f;
+    const Fixed spark_deflect_rad = 30.0f;
 
     int last[3][4] = {0};
 
@@ -63,19 +63,18 @@ int main() {
 
         vy += gravity;
 
-        Fixed angleX = (Fixed)(joysticks.X1 - 3) / 12;
-        Fixed angleY = (Fixed)(joysticks.Y1 - 3) / 12;
+        Fixed angleX = (Fixed)(joysticks.X1 - 3) / 8;
+        Fixed angleY = (Fixed)(joysticks.Y1 - 3) / 8;
 
         if (bounceX || bounceY) {
             Graphics::line(last[1][0], last[1][1], last[1][2], last[1][3], 0);
-            Graphics::line(last[2][0], last[2][1], last[2][2], last[2][3], 0);
             bounceX = false;
             bounceY = false;
         }
 
         if (bullet) {
             if (((bullet_c % bullet_cmax) == 0)) {
-                Graphics::line(bx.toInt(), by.toInt(), (bx - (bvx * bullet_tail)).toInt(),( by - (bvy * bullet_tail)).toInt(), 0);
+                Graphics::line(bx.toInt(), by.toInt(), (bx - (bvx * bullet_tail)).toInt(), (by - (bvy * bullet_tail)).toInt(), 0);
             }
             bullet = (bx > X_MIN) && (bx < X_MAX) && (by > Y_MIN) && (by < Y_MAX);
             ++bullet_c;
@@ -87,7 +86,7 @@ int main() {
             bx = bx + bvx;
             by = by + bvy;
             if (((bullet_c % bullet_cmax) == 0)) {
-                Graphics::line(bx.toInt(), by.toInt(), (bx - (bvx * bullet_tail)).toInt(),( by - (bvy * bullet_tail)).toInt(), 2);
+                Graphics::line(bx.toInt(), by.toInt(), (bx - (bvx * bullet_tail)).toInt(), (by - (bvy * bullet_tail)).toInt(), 2);
             }
         }
 
@@ -130,25 +129,6 @@ int main() {
         if (bounceX || bounceY) {
             Fixed angle = FixedMath::atan2(vy, vx);
 
-            Fixed left = angle - spark_deflect_rad;
-            Fixed right = angle + spark_deflect_rad;
-
-            Fixed ldx = FixedMath::cos(left);
-            Fixed ldy = FixedMath::sin(left);
-
-            Fixed rdx = FixedMath::cos(right);
-            Fixed rdy = FixedMath::sin(right);
-
-            last[1][0] = x + ldx * spark_dist;
-            last[1][1] = y + ldy * spark_dist;
-            last[1][2] = last[1][0] + ldx * spark_tail;
-            last[1][3] = last[1][1] + ldy * spark_tail;
-
-            last[2][0] = x + rdx * spark_dist;
-            last[2][1] = y + rdy * spark_dist;
-            last[2][2] = last[2][0] + rdx * spark_tail;
-            last[2][3] = last[2][1] + rdy * spark_tail;
-
             if (bounceX) {
                 vx *= bounce;
             }
@@ -157,8 +137,21 @@ int main() {
                 vy *= bounce;
             }
 
+            if (angle < FixedMath::PI) {
+                angle -= spark_deflect_rad;
+            } else {
+                angle += spark_deflect_rad;
+            }
+
+            Fixed dx = FixedMath::cos(angle);
+            Fixed dy = FixedMath::sin(angle);
+
+            last[1][0] = x - (dx * spark_dist);
+            last[1][1] = y - (dy * spark_dist);
+            last[1][2] = last[1][0] + dx * spark_tail;
+            last[1][3] = last[1][1] + dy * spark_tail;
+
             Graphics::line(last[1][0], last[1][1], last[1][2], last[1][3], 3);
-            Graphics::line(last[2][0], last[2][1], last[2][2], last[2][3], 3);
         }
 
         if (joysticks.A1 && !bullet) {

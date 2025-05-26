@@ -11,7 +11,7 @@
 
 class FixedMath {
 public:
-    // static void init();
+    static const Fixed PI;
 
     static Fixed sin(uint16_t angle);
     static Fixed cos(uint16_t angle);

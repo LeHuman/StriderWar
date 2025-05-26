@@ -4,7 +4,7 @@
 
 #include "generated_luts.hpp"
 
-static const float M_PI = 3.14159265f;
+const Fixed FixedMath::PI = 3.14159265f;
 
 Fixed FixedMath::sin(uint16_t angle) {
     return sinTable[angle % TRIG_RESOLUTION];
