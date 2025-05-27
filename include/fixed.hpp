@@ -65,6 +65,12 @@ public:
     bool operator<=(Fixed rhs) const { return value <= rhs.value; }
     bool operator>=(Fixed rhs) const { return value >= rhs.value; }
 
+    bool operator==(uint16_t i16) const { return value == INT2FIXED(i16); }
+    bool operator<(uint16_t i16) const { return value < INT2FIXED(i16); }
+    bool operator>(uint16_t i16) const { return value > INT2FIXED(i16); }
+    bool operator<=(uint16_t i16) const { return value <= INT2FIXED(i16); }
+    bool operator>=(uint16_t i16) const { return value >= INT2FIXED(i16); }
+
     operator float() const {
         return value / static_cast<float>(FIXED_SCALE);
     }
