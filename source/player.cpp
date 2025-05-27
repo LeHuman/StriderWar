@@ -1,5 +1,9 @@
 #include "player.hpp"
 
+#include "fixed.hpp"
+#include "fixed_math.hpp"
+#include "graphics.hpp"
+#include "world.hpp"
 
 Player::Player(Joysticks::Player &input) : enabled_bullets(0), input(input), last_bullet(false), req_bullet(false), bounced(0) {
     ship.x = Graphics::X_MAX / 2;
@@ -12,6 +16,8 @@ Player::Player(Joysticks::Player &input) : enabled_bullets(0), input(input), las
         bullets[i].set_priority(1);
     }
 }
+
+static const Fixed bullet_vel_cmp = 1;
 
 void Player::step() {
     if (!input.alt) {
@@ -51,7 +57,7 @@ void Player::step() {
 
     bool fire = false;
 
-    if (req_bullet != last_bullet) {
+    if (req_bullet != last_bullet && (FixedMath::abs(ship.vx) > bullet_vel_cmp || FixedMath::abs(ship.vy) > bullet_vel_cmp)) {
         fire = req_bullet;
         last_bullet = req_bullet;
     }

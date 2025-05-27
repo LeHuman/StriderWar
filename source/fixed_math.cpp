@@ -14,15 +14,16 @@ Fixed FixedMath::cos(uint16_t angle) {
     return sinTable[(angle + TRIG_RESOLUTION / 4) % TRIG_RESOLUTION];
 }
 
-static inline Fixed fixed_abs(Fixed x) {
-    return Fixed::fromRaw(x.raw() < 0 ? -x.raw() : x.raw());
-}
+// inline Fixed FixedMath::abs(Fixed x) {
+//     return Fixed::fromRaw(x.raw() < 0 ? -x.raw() : x.raw());
+// }
+
 uint16_t FixedMath::atan2(Fixed y, Fixed x) {
     if (x.raw() == 0 && y.raw() == 0)
         return 0;
 
-    Fixed absY = fixed_abs(y);
-    Fixed absX = fixed_abs(x);
+    Fixed absY = FixedMath::abs(y);
+    Fixed absX = FixedMath::abs(x);
 
     bool yIsBigger = absY.raw() > absX.raw();
     Fixed ratio = yIsBigger

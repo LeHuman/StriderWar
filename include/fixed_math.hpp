@@ -15,6 +15,9 @@ public:
     static Fixed sin(uint16_t angle);
     static Fixed cos(uint16_t angle);
     static uint16_t atan2(Fixed y, Fixed x);
+    static inline Fixed abs(Fixed x) {
+        return Fixed::fromRaw(x.raw() < 0 ? -x.raw() : x.raw());
+    }
 
     static Fixed sqrt(Fixed x);
     static Fixed log2(Fixed x);
