@@ -1,5 +1,4 @@
-#ifndef SOUND_HPP
-#define SOUND_HPP
+#pragma once
 
 class Sound {
 public:
@@ -8,5 +7,3 @@ public:
     static void noise(int type, int volume);                  // type: 0-3
     static void silence();                                    // silence all
 };
-
-#endif // SOUND_HPP

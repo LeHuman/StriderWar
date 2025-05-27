@@ -1,5 +1,4 @@
-#ifndef FIXED_MATH_HPP
-#define FIXED_MATH_HPP
+#pragma once
 
 #include "fixed.hpp"
 
@@ -21,7 +20,4 @@ public:
     static Fixed log2(Fixed x);
     static Fixed log(Fixed x);
     static Fixed pow(Fixed base, Fixed exp);
-
 };
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef JOYSTICK_H
-#define JOYSTICK_H
+#pragma once
 
 class Joysticks {
     const unsigned port;
@@ -20,5 +19,3 @@ public:
     Joysticks(unsigned port) : port(port) {};
     void update();
 };
-
-#endif // JOYSTICK_H

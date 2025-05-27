@@ -1,5 +1,4 @@
-#ifndef FIXED_HPP
-#define FIXED_HPP
+#pragma once
 
 #include <stdint.h>
 
@@ -87,5 +86,3 @@ public:
         return static_cast<int>(value >> FIXED_SHIFT);
     }
 };
-
-#endif

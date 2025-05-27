@@ -1,5 +1,4 @@
-#ifndef GRAPHICS_H
-#define GRAPHICS_H
+#pragma once
 
 #include <stdint.h>
 
@@ -29,5 +28,3 @@ public:
         Graphics::line(line.x0, line.y0, line.x1, line.y1, color);
     }
 };
-
-#endif // GRAPHICS_H
