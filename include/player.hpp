@@ -2,12 +2,8 @@
 
 #include <stdlib.h>
 
-#include "fixed.hpp"
-#include "fixed_math.hpp"
-#include "graphics.hpp"
 #include "joysticks.hpp"
 #include "strider.hpp"
-#include "world.hpp"
 
 struct Player {
     Strider ship;

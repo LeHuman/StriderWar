@@ -20,17 +20,98 @@ int main() {
     uint16_t sound_freq = 0;
     bool silent = 0;
 
-    sound(340);
-    delay(200);
-    sound(540);
+    bool player_a_on = false;
+    bool player_b_on = false;
+
+    sound(466);
+    delay(100);
+
+    sound(392);
+    delay(100);
+
+    nosound();
+    delay(100);
+
+    sound(466);
+    delay(140);
+
+    nosound();
+    delay(60);
+
+    sound(523);
     delay(100);
     nosound();
 
     while (!kbhit()) {
         joysticks.update();
 
-        playerA.step();
-        playerB.step();
+        if (player_a_on) {
+            playerA.step();
+        } else if (joysticks.playerA.fire || joysticks.playerA.alt) {
+            player_a_on = true;
+
+            sound(784);
+            delay(30);
+
+            nosound();
+            delay(70);
+
+            sound(784);
+            delay(60);
+
+            nosound();
+            delay(100);
+
+            sound(784);
+            delay(100);
+
+            nosound();
+            delay(100);
+
+            sound(698);
+            delay(70);
+
+            nosound();
+            delay(180);
+
+            sound(784);
+            delay(100);
+            nosound();
+        }
+
+        if (player_b_on) {
+            playerB.step();
+        } else if (joysticks.playerB.fire || joysticks.playerB.alt) {
+            player_b_on = true;
+
+            sound(1047);
+            delay(30);
+
+            nosound();
+            delay(70);
+
+            sound(1047);
+            delay(60);
+
+            nosound();
+            delay(100);
+
+            sound(784);
+            delay(100);
+
+            nosound();
+            delay(100);
+
+            sound(698);
+            delay(70);
+
+            nosound();
+            delay(180);
+
+            sound(784);
+            delay(100);
+            nosound();
+        }
 
         if ((playerA.enabled_bullets + playerB.enabled_bullets) != total_bullets) {
             if ((playerA.enabled_bullets + playerB.enabled_bullets) > total_bullets) {
@@ -71,8 +152,13 @@ int main() {
             sound(sound_freq);
         }
 
-        playerA.draw();
-        playerB.draw();
+        if (player_a_on) {
+            playerA.draw();
+        }
+
+        if (player_b_on) {
+            playerB.draw();
+        }
     }
 
     getch();
