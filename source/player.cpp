@@ -1,5 +1,6 @@
 #include "player.hpp"
 
+
 Player::Player(Joysticks::Player &input) : enabled_bullets(0), input(input), last_bullet(false), req_bullet(false), bounced(0) {
     ship.x = Graphics::X_MAX / 2;
     ship.y = Graphics::Y_MAX / 2;
@@ -14,8 +15,8 @@ Player::Player(Joysticks::Player &input) : enabled_bullets(0), input(input), las
 
 void Player::step() {
     if (!input.alt) {
-        Fixed ix = (Fixed)(input.x - 2) / 8;
-        Fixed iy = (Fixed)(input.y - 2) / 8;
+        Fixed ix = (Fixed)(input.x - 2) / 6;
+        Fixed iy = (Fixed)(input.y - 2) / 6;
 
         ship.pulse(ix, iy);
     }
