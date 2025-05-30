@@ -162,5 +162,6 @@ int main() {
     }
 
     getch();
+    nosound();
     return 0;
 }
