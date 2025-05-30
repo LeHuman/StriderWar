@@ -2,10 +2,11 @@
 
 #include <math.h>
 
+#include "fixed_math.hpp"
 #include "graphics.hpp"
 
 Cube::Cube() {
-    float size = 100.0f;
+    Fixed size = 100.0f;
     vertices[0][0] = -size;
     vertices[0][1] = -size;
     vertices[0][2] = -size;
@@ -39,28 +40,28 @@ Cube::Cube() {
     }
 }
 
-void Cube::project(float x, float y, float z, int &sx, int &sy) {
-    float scale = 100.0f / (z + 200.0f);
-    sx = (int)(x * scale + (640 / 2));
+void Cube::project(Fixed &x, Fixed &y, Fixed &z, int &sx, int &sy) {
+    Fixed scale = 100.0f / (z + 200.0f);
+    sx = (int)(x * scale + (640 / 4));
     sy = (int)(y * scale + (200 / 2));
 }
 
-float rotated[8][3];
+Fixed rotated[8][3];
 int result[12][4] = {0};
 
-void Cube::draw(float angleX, float angleY) {
+void Cube::draw(Fixed &angleX, Fixed &angleY) {
     for (int i = 0; i < 8; ++i) {
-        float x = vertices[i][0];
-        float y = vertices[i][1];
-        float z = vertices[i][2];
+        Fixed x = vertices[i][0];
+        Fixed y = vertices[i][1];
+        Fixed z = vertices[i][2];
 
-        float rx = y * sin(angleX) + z * cos(angleX);
-        float ry = y * cos(angleX) - z * sin(angleX);
+        Fixed rx = y * FixedMath::sin(angleX) + z * FixedMath::cos(angleX);
+        Fixed ry = y * FixedMath::cos(angleX) - z * FixedMath::sin(angleX);
         y = ry;
         z = rx;
 
-        float rz = z * cos(angleY) - x * sin(angleY);
-        float rx2 = z * sin(angleY) + x * cos(angleY);
+        Fixed rz = z * FixedMath::cos(angleY) - x * FixedMath::sin(angleY);
+        Fixed rx2 = z * FixedMath::sin(angleY) + x * FixedMath::cos(angleY);
         x = rx2;
         z = rz;
 

@@ -1,13 +1,14 @@
 #pragma once
 
+#include "fixed.hpp"
+
 class Cube {
 public:
     Cube();
-    void draw(float angleX, float angleY);
-    void clear();
+    void draw(Fixed &angleX, Fixed &angleY);
 
 private:
-    void project(float x, float y, float z, int &sx, int &sy);
-    float vertices[8][3];
+    void project(Fixed &x, Fixed &y, Fixed &z, int &sx, int &sy);
+    Fixed vertices[8][3];
     int edges[12][2];
 };
