@@ -8,19 +8,22 @@
 #define LUT_RESOLUTION 255                      // 0 to 16 in steps of 1/16
 #define LUT_STEP_FIXED (1 << (FIXED_SHIFT - 4)) // 1/16 in 12.4 = 0x0010
 
-class FixedMath {
-public:
-    static const Fixed PI;
+namespace DOS {
+namespace Math {
+    namespace Fix {
+        static const Fixed PI = 3.14159265f;
 
-    static Fixed sin(uint16_t angle);
-    static Fixed cos(uint16_t angle);
-    static uint16_t atan2(Fixed y, Fixed x);
-    static inline Fixed abs(Fixed x) {
-        return Fixed::fromRaw(x.raw() < 0 ? -x.raw() : x.raw());
-    }
+        Fixed sin(uint16_t angle);
+        Fixed cos(uint16_t angle);
+        uint16_t atan2(Fixed y, Fixed x);
+        static inline Fixed abs(Fixed x) {
+            return Fixed::fromRaw(x.raw() < 0 ? -x.raw() : x.raw());
+        }
 
-    static Fixed sqrt(Fixed x);
-    static Fixed log2(Fixed x);
-    static Fixed log(Fixed x);
-    static Fixed pow(Fixed base, Fixed exp);
-};
+        Fixed sqrt(Fixed x);
+        Fixed log2(Fixed x);
+        Fixed log(Fixed x);
+        Fixed pow(Fixed base, Fixed exp);
+    }; // namespace Fix
+}; // namespace Math
+}; // namespace DOS

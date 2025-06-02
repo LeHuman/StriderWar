@@ -6,8 +6,8 @@
 #include "world.hpp"
 
 Player::Player(Joysticks::Player &input) : enabled_bullets(0), input(input), last_bullet(false), req_bullet(false), bounced(0) {
-    ship.x = Graphics::X_MAX / 2;
-    ship.y = Graphics::Y_MAX / 2;
+    ship.x = DOS::Video::X_MAX / 2;
+    ship.y = DOS::Video::Y_MAX / 2;
     ship.enabled = true;
     ship.has_physics = true;
     ship.color = 1;
@@ -40,14 +40,14 @@ void Player::step() {
         static const Fixed spark_tail = -0.5f;
         static const Fixed spark_deflect_rad = 30.0f;
 
-        if (ship.bounce.angle < FixedMath::PI) {
+        if (ship.bounce.angle < DOS::Math::Fix::PI) {
             ship.bounce.angle -= spark_deflect_rad;
         } else {
             ship.bounce.angle += spark_deflect_rad;
         }
 
-        Fixed dx = FixedMath::cos(ship.bounce.angle);
-        Fixed dy = FixedMath::sin(ship.bounce.angle);
+        Fixed dx = DOS::Math::Fix::cos(ship.bounce.angle);
+        Fixed dy = DOS::Math::Fix::sin(ship.bounce.angle);
 
         spark.x0 = ship.x - (dx * spark_dist);
         spark.y0 = ship.y - (dy * spark_dist);
@@ -57,7 +57,7 @@ void Player::step() {
 
     bool fire = false;
 
-    if (req_bullet != last_bullet && (FixedMath::abs(ship.vx) > bullet_vel_cmp || FixedMath::abs(ship.vy) > bullet_vel_cmp)) {
+    if (req_bullet != last_bullet && (DOS::Math::Fix::abs(ship.vx) > bullet_vel_cmp || DOS::Math::Fix::abs(ship.vy) > bullet_vel_cmp)) {
         fire = req_bullet;
         last_bullet = req_bullet;
     }
@@ -93,7 +93,7 @@ void Player::step() {
 
 void Player::draw() {
     if (bounced) {
-        Graphics::line(spark, bounced - 1);
+        DOS::Draw::line(spark, bounced - 1);
         if (bounced == 4) {
             bounced = 1;
         } else {

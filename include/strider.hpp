@@ -8,7 +8,7 @@
 
 class Strider {
 private:
-    Graphics::Line trail[4];
+    DOS::Draw::Line trail[4];
     int trail_count;
     int last_count;
     int count;

@@ -1,3 +1,5 @@
 #pragma once
 
-#include "graphics/graphics.hpp"
+#include "graphics/cgamap.hpp"
+#include "graphics/draw.hpp"
+#include "graphics/video.hpp"

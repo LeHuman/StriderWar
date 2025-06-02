@@ -49,37 +49,37 @@ void Strider::step() {
     x += vx;
     y += vy;
 
-    if (x <= Graphics::X_MIN) {
-        x = Graphics::X_MIN;
+    if (x <= DOS::Video::X_MIN) {
+        x = DOS::Video::X_MIN;
         x += 0.01f;
         bounce.x = true;
     }
 
-    if (x >= Graphics::X_MAX) {
-        x = Graphics::X_MAX;
+    if (x >= DOS::Video::X_MAX) {
+        x = DOS::Video::X_MAX;
         x -= 0.01f;
         bounce.x = true;
     }
 
-    if (y <= Graphics::Y_MIN) {
-        y = Graphics::Y_MIN;
+    if (y <= DOS::Video::Y_MIN) {
+        y = DOS::Video::Y_MIN;
         y += 0.01f;
         bounce.y = true;
     }
 
-    if (y >= Graphics::Y_MAX) {
-        y = Graphics::Y_MAX;
+    if (y >= DOS::Video::Y_MAX) {
+        y = DOS::Video::Y_MAX;
         y -= 0.01f;
         bounce.y = true;
     }
 
     if (has_physics && (bounce.y || bounce.x)) {
-        bounce.angle = FixedMath::atan2(vy, vx);
+        bounce.angle = DOS::Math::Fix::atan2(vy, vx);
         vx *= bounce_mult;
         vy *= bounce_mult;
     }
 
-    draw_counter_limit = (((draw_counter_max - FixedMath::sqrt(vx * vx + vy * vy).toInt() * (draw_counter_max / 4)) & draw_counter_max) / 2) | 1;
+    draw_counter_limit = (((draw_counter_max - DOS::Math::Fix::sqrt(vx * vx + vy * vy).toInt() * (draw_counter_max / 4)) & draw_counter_max) / 2) | 1;
 }
 
 void Strider::draw(bool force) {
@@ -92,8 +92,8 @@ void Strider::draw(bool force) {
     trail[count].x1 = x - vx * (tail_mult + (draw_counter_max / 16));
     trail[count].y1 = y - vy * (tail_mult + (draw_counter_max / 16));
 
-    Graphics::line(trail[count], color);
-    Graphics::line(trail[last_count], 0);
+    DOS::Draw::line(trail[count], color);
+    DOS::Draw::line(trail[last_count], 0);
 
     last_count = count;
     count++;

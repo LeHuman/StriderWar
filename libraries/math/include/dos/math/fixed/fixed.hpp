@@ -8,10 +8,9 @@
 #define FLOAT2FIXED(f) ((int16_t)(f * FIXED_SCALE))
 #define INT2FIXED(i) ((int16_t)(i << FIXED_SHIFT))
 
-class Fixed {
+struct Fixed {
     int16_t value;
 
-public:
     Fixed() : value(0) {}
     explicit Fixed(int integer) : value((INT2FIXED(integer))) {}
     Fixed(float f) : value(FLOAT2FIXED(f)) {}

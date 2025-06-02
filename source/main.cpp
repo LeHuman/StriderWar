@@ -6,7 +6,7 @@
 #include "player.hpp"
 
 int main() {
-    Graphics::init();
+    DOS::Video::initialize();
 
     Joysticks joysticks(0x201);
 
@@ -21,6 +21,9 @@ int main() {
 
     bool player_a_on = false;
     bool player_b_on = false;
+
+    DOS::CGA::display_cga("img/xp.cga", DOS::CGA::NONE);
+    DOS::CGA::display_cga("img/proto.cga", DOS::CGA::SEMI);
 
     sound(466);
     delay(100);

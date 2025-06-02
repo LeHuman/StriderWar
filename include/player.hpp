@@ -14,7 +14,7 @@ struct Player {
     bool req_bullet;
 
     int bounced;
-    Graphics::Line spark;
+    DOS::Draw::Line spark;
 
     const Joysticks::Player &input;
 
