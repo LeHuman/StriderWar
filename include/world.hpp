@@ -1,6 +1,6 @@
 #pragma once
 
-#include "fixed.hpp"
+#include <dos/math.hpp>
 
 static const Fixed gravity = 0.45f;
 static const Fixed friction = 0.999f;

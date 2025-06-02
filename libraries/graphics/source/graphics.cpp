@@ -1,11 +1,10 @@
-#include "graphics.hpp"
+#include "dos/graphics/graphics.hpp"
 
 #include <dos.h>
+#include <graph.h>
 #include <memory.h>
 #include <stdlib.h>
 #include <string.h>
-
-#include "graph.h"
 
 static uint8_t last_color = 0;
 

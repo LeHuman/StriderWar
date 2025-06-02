@@ -1,4 +1,4 @@
-#include "sound.hpp"
+#include "dos/sound/sound.hpp"
 
 #include <conio.h>
 #include <dos.h>

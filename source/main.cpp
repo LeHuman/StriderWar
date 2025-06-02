@@ -3,7 +3,6 @@
 #include <dos.h>
 #include <i86.h>
 
-#include "joystick.hpp"
 #include "player.hpp"
 
 int main() {

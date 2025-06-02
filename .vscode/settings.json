@@ -3,7 +3,8 @@
         "-DCMAKE_CXX_COMPILER_WORKS=1",
         "-DCMAKE_C_COMPILER_WORKS=1"
     ],
-    "cmake.generator": "Ninja", //Comment this if you aren't using OpenWatcom compiler.
+    // "cmake.generator": "Watcom WMake", //Comment this if you aren't using OpenWatcom compiler.
+    "cmake.generator": "Ninja",
     "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
     "files.associations": {
         "*.html": "html",
@@ -35,7 +36,8 @@
         "cstring": "c",
         "istream": "c",
         "stdint.h": "c",
-        "stdlib.h": "c"
+        "stdlib.h": "c",
+        "math.h": "c"
     },
     "sonarlint.pathToCompileCommands": "${workspaceFolder}\\build\\compile_commands.json",
 }

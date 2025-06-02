@@ -1,8 +1,8 @@
-#include "fixed_math.hpp"
+#include "dos/math/fixed/fixed_math.hpp"
 
 #include <math.h> // only for init
 
-#include "generated_luts.hpp"
+#include "dos/math/luts.hpp"
 
 const Fixed FixedMath::PI = 3.14159265f;
 

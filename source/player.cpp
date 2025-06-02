@@ -1,8 +1,8 @@
 #include "player.hpp"
 
-#include "fixed.hpp"
-#include "fixed_math.hpp"
-#include "graphics.hpp"
+#include <dos/graphics.hpp>
+#include <dos/math.hpp>
+
 #include "world.hpp"
 
 Player::Player(Joysticks::Player &input) : enabled_bullets(0), input(input), last_bullet(false), req_bullet(false), bounced(0) {

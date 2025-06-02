@@ -1,8 +1,8 @@
 #pragma once
 
+#include <dos/input.hpp>
 #include <stdlib.h>
 
-#include "joysticks.hpp"
 #include "strider.hpp"
 
 struct Player {

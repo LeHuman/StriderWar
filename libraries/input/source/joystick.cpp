@@ -1,4 +1,4 @@
-#include "joystick.hpp"
+#include "dos/input/joystick.hpp"
 
 #include <conio.h>
 #include <dos.h>

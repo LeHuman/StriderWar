@@ -1,10 +1,9 @@
 #pragma once
 
+#include <dos/graphics.hpp>
+#include <dos/math.hpp>
 #include <stdlib.h>
 
-#include "fixed.hpp"
-#include "fixed_math.hpp"
-#include "graphics.hpp"
 #include "world.hpp"
 
 class Strider {

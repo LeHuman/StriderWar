@@ -17,21 +17,10 @@ add_compile_definitions(_M_I86 __DOS__ __MEDIUM__)
 
 file(GLOB_RECURSE SOURCES source/*.cpp source/*.c)
 
-# Generate LUTs
-find_package(Python3 REQUIRED)
-add_custom_command(
-    OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/generated_luts.hpp
-    COMMAND ${CMAKE_COMMAND} -E echo "Generating LUTs from fixed_math.hpp..."
-    COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/scripts/generate_luts.py
-    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/scripts/generate_luts.py ${CMAKE_CURRENT_SOURCE_DIR}/include/fixed_math.hpp
-    COMMENT "Generating lookup tables"
-)
-add_custom_target(generate_luts DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/generated_luts.hpp)
-
+add_subdirectory(libraries)
 
 # Add the executable target
 add_executable(${PROJECT_NAME} ${SOURCES})
-add_dependencies(${PROJECT_NAME} generate_luts)
+target_link_libraries(${PROJECT_NAME} DOSGraphics DOSInput DOSMath DOSSound)
 
 include_directories(include)
-# include_directories("C:\\WATCOM\\h")
