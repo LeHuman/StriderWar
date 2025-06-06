@@ -4,8 +4,8 @@ namespace DOS {
 namespace Video {
 
     void initialize() {
-        _setvideomode(VIDEO_MODE);
-        _selectpalette(VIDEO_PALETTE);
+        _setvideomode(MODE);
+        _selectpalette(PALETTE);
     }
 
 } // namespace Video

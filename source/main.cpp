@@ -3,10 +3,20 @@
 #include <dos.h>
 #include <i86.h>
 
+#include "dos/sound.hpp"
 #include "player.hpp"
 
 int main() {
     DOS::Video::initialize();
+    DOS::Sound::initialize();
+
+    DOS::Sound::play(775, 10, 650, 10, 200, 3, 2, 8, 200);
+    delay(100);
+    DOS::Sound::play(775, 10, 650, 0, 200, 3, 2, 0, 200);
+    delay(50);
+    DOS::Sound::play(500, 9, 600, 10, 200, 3, 2, 5, 100);
+    delay(100);
+    DOS::Sound::silence();
 
     Joysticks joysticks(0x201);
 
@@ -22,8 +32,7 @@ int main() {
     bool player_a_on = false;
     bool player_b_on = false;
 
-    DOS::CGA::display_cga("img/xp.cga", DOS::CGA::NONE);
-    DOS::CGA::display_cga("img/proto.cga", DOS::CGA::SEMI);
+    DOS::CGA::display_cga("img/proto.cga", DOS::CGA::NONE);
 
     sound(466);
     delay(100);
