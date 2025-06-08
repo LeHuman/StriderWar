@@ -11,6 +11,8 @@ namespace CGA {
         File_Read_Sprite_Size,
         File_Read_Sprite_Data,
         Value_Sprite_Load,
+        File_Open_CGA,
+        File_Read_CGA_Data,
     };
 
     struct Sprite {
@@ -34,8 +36,8 @@ namespace CGA {
     extern uint8_t sprite_memory[SPRITE_MEMORY_SIZE];
     extern SpriteBank sprite_bank;
 
-    int display_cga(const char *filename, Transparency transparent = SEMI);
-    int display_sprite(const uint16_t *offsets, const uint8_t *masks, uint8_t length, uint8_t color, Transparency transparent, int8_t x_offset);
+    Error display_cga(const char *filename, Transparency transparent = SEMI);
+    Error display_sprite(const Sprite &sprite, uint8_t color, Transparency transparent, int8_t x_offset);
     Error load_sprite(uint16_t id, uint8_t color, Transparency transparent, int8_t x_offset);
     Error load_sprites(const char *filename);
 }; // namespace CGA

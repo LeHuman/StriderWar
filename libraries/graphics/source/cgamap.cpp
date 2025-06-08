@@ -18,13 +18,13 @@ namespace CGA {
     SpriteBank sprite_bank = {(uint16_t *)&sprite_memory[0], (uint16_t *)&sprite_memory[2]};
     Sprite sprite;
 
-    int display_sprite(const Sprite &sprite, uint8_t color, Transparency transparent, int8_t x_offset) {
+    Error display_sprite(const Sprite &sprite, uint8_t color, Transparency transparent, int8_t x_offset) {
         // Turn color into a mask for all 4 pixels per byte
         static const uint8_t color_map[4] = {0x00, 0x55, 0xAA, 0xFF};
         color = color_map[color & 0x03];
 
         if ((color == 0) && (transparent != NONE)) {
-            return 0;
+            return None;
         }
 
         for (uint8_t i = 0; i < sprite.length; i++) {
@@ -58,7 +58,7 @@ namespace CGA {
             }
         }
 
-        return 0;
+        return None;
     }
 
     Error load_sprite(uint16_t id, uint8_t color, Transparency transparent, int8_t x_offset) {
@@ -104,20 +104,20 @@ namespace CGA {
         return code;
     }
 
-    int display_cga(const char *filename, Transparency transparent) {
+    Error display_cga(const char *filename, Transparency transparent) {
         FILE *f = fopen(filename, "rb");
         if (!f) {
             fclose(f);
-            return -1;
+            return File_Open_CGA;
         }
 
         for (int y = 0; y < DOS::Video::HEIGHT; ++y) {
             uint8_t line[DOS::Video::BYTES_PER_LINE];
             int pos = 0;
 
-            if (fread(line, 1, 80, f) != 80) {
+            if (fread(line, 1, DOS::Video::BYTES_PER_LINE, f) != DOS::Video::BYTES_PER_LINE) {
                 fclose(f);
-                return -1;
+                return File_Read_CGA_Data;
             }
 
             const unsigned offset = (y / 2) * DOS::Video::BYTES_PER_LINE + (y % 2) * 0x2000;
@@ -151,7 +151,7 @@ namespace CGA {
         }
 
         fclose(f);
-        return 0;
+        return None;
     }
 } // namespace CGA
 } // namespace DOS
