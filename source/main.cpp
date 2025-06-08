@@ -2,21 +2,15 @@
 #include <conio.h>
 #include <dos.h>
 #include <i86.h>
+#include <stdio.h>
 
+#include "dos/graphics.hpp"
 #include "dos/sound.hpp"
 #include "player.hpp"
 
 int main() {
     DOS::Video::initialize();
     DOS::Sound::initialize();
-
-    DOS::Sound::play(775, 10, 650, 10, 200, 3, 2, 8, 200);
-    delay(100);
-    DOS::Sound::play(775, 10, 650, 0, 200, 3, 2, 0, 200);
-    delay(50);
-    DOS::Sound::play(500, 9, 600, 10, 200, 3, 2, 5, 100);
-    delay(100);
-    DOS::Sound::silence();
 
     Joysticks joysticks(0x201);
 
@@ -32,29 +26,26 @@ int main() {
     bool player_a_on = false;
     bool player_b_on = false;
 
-    DOS::CGA::display_cga("img/proto.cga", DOS::CGA::NONE);
+    DOS::CGA::display_cga("frame.cga", DOS::CGA::SEMI);
+    DOS::CGA::display_cga("title.cga", DOS::CGA::SEMI);
+    DOS::CGA::load_sprites("sprites.bin");
 
-    sound(466);
+    DOS::Sound::play(775, 10, 650, 10, 200, 3, 2, 8, 200);
     delay(100);
-
-    sound(392);
+    DOS::Sound::play(775, 10, 650, 0, 200, 3, 2, 0, 200);
+    delay(50);
+    DOS::Sound::play(500, 9, 600, 10, 200, 3, 2, 5, 100);
     delay(100);
+    DOS::Sound::silence();
 
-    nosound();
-    delay(100);
-
-    sound(466);
-    delay(140);
-
-    nosound();
-    delay(60);
-
-    sound(523);
-    delay(100);
-    nosound();
+    size_t sprite_i = 0;
+    size_t sprite_c = 0;
 
     while (!kbhit()) {
         joysticks.update();
+        DOS::CGA::load_sprite(sprite_i, sprite_c, DOS::CGA::NONE, 0);
+        sprite_i = abs(rand()) % *DOS::CGA::sprite_bank.length;
+        sprite_c = ((sprite_c + 1) % 3) + 1;
 
         if (player_a_on) {
             playerA.step();

@@ -51,7 +51,7 @@ def convert_bw_image_to_mode6(input_png, output_bin, interlaced=False):
 
 
 def convert_image_to_cga(input_png, output_bin):
-    img = Image.open(input_png).convert('RGB')
+    img = Image.open(input_png)
     if img.size != (320, 200):
         raise ValueError("Image must be 320x200")
 
@@ -63,6 +63,11 @@ def convert_image_to_cga(input_png, output_bin):
                 byte = 0
                 for i in range(4):
                     color = pixels[x + i, y]
+                    if len(color) > 3:
+                        if (color[3] <= (255/2)):
+                            color = (0, 0, 0)
+                        else:
+                            color = (color[0], color[1], color[2])
                     index = nearest_match(color)
                     byte |= (index & 0x03) << (6 - 2 * i)
                 f.write(bytes([byte]))
