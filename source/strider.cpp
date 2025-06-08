@@ -49,34 +49,40 @@ void Strider::step() {
     x += vx;
     y += vy;
 
-    if (x <= DOS::Video::X_MIN) {
-        x = DOS::Video::X_MIN;
-        x += 0.01f;
+    Fixed offset(FLOAT2FIXED(0.01f), true);
+
+    if (x <= X_MIN) {
+        x = X_MIN;
+        x += offset;
         bounce.x = true;
     }
 
-    if (x >= DOS::Video::X_MAX) {
-        x = DOS::Video::X_MAX;
-        x -= 0.01f;
+    if (x >= X_MAX) {
+        x = X_MAX;
+        x -= offset;
         bounce.x = true;
     }
 
-    if (y <= DOS::Video::Y_MIN) {
-        y = DOS::Video::Y_MIN;
-        y += 0.01f;
+    if (y <= Y_MIN) {
+        y = Y_MIN;
+        y += offset;
         bounce.y = true;
     }
 
-    if (y >= DOS::Video::Y_MAX) {
-        y = DOS::Video::Y_MAX;
-        y -= 0.01f;
+    if (y >= Y_MAX) {
+        y = Y_MAX;
+        y -= offset;
         bounce.y = true;
     }
 
     if (has_physics && (bounce.y || bounce.x)) {
         bounce.angle = DOS::Math::Fix::atan2(vy, vx);
-        vx *= bounce_mult;
-        vy *= bounce_mult;
+        if (bounce.x) {
+            vx *= bounce_mult;
+        }
+        if (bounce.y) {
+            vy *= bounce_mult;
+        }
     }
 
     draw_counter_limit = (((draw_counter_max - DOS::Math::Fix::sqrt(vx * vx + vy * vy).toInt() * (draw_counter_max / 4)) & draw_counter_max) / 2) | 1;

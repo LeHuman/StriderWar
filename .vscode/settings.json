@@ -37,7 +37,8 @@
         "istream": "c",
         "stdint.h": "c",
         "stdlib.h": "c",
-        "math.h": "c"
+        "math.h": "c",
+        "xutility": "c"
     },
     "sonarlint.pathToCompileCommands": "${workspaceFolder}\\build\\compile_commands.json",
 }
