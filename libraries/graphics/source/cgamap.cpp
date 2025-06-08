@@ -32,6 +32,11 @@ namespace CGA {
             const uint8_t &mask = sprite.masks[i];
             const uint8_t byte = color & mask;
 
+            // TODO: Is this slower?
+            if (*vram == byte) {
+                continue;
+            }
+
             switch (transparent) {
                 case PERFECT: {
                     if (*vram) {
