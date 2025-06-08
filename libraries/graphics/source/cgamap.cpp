@@ -34,8 +34,12 @@ namespace CGA {
 
             switch (transparent) {
                 case PERFECT: {
-                    *vram &= ~mask;
-                    *vram |= byte;
+                    if (*vram) {
+                        *vram &= ~mask;
+                        *vram |= byte;
+                    } else {
+                        *vram = byte;
+                    }
                     break;
                 }
                 case SEMI:
