@@ -5,6 +5,7 @@
             "includePath": [
                 "${workspaceFolder}/include/**",
                 "${workspaceFolder}/source/**",
+                "${workspaceFolder}/libraries/**",
                 "C:/WATCOM/h/**"
             ],
             "defines": [
@@ -14,13 +15,28 @@
                 "__WATCOMC__",
                 "_M_I86",
                 "__DOS__",
-                "__MEDIUM__"
+                "__MEDIUM__",
+                "far="
             ],
             "cStandard": "c89",
             "cppStandard": "c++98",
-            "intelliSenseMode": "gcc-x86",
-            "configurationProvider": "ms-vscode.cmake-tools",
-            "compilerPath": "C:\\WATCOM\\binnt64\\wcc.exe"
+            "intelliSenseMode": "msvc-x86",
+            "compilerArgs": [
+                "/std:c++14",
+                "/Za", // disable MS extensions
+                "/W4", // high warning level
+                "/EHs-" // C++ exceptions (disabled)
+            ],
+            // "configurationProvider": "ms-vscode.cmake-tools",
+            // "compilerArgs": [
+            //     "-fo=./obj/",
+            //     "-db",
+            //     "-d3s",
+            //     "-bt=DOS",
+            //     "-fe=./bin/main.exe"
+            // ],
+            // "compilerPath": "C:\\WATCOM\\binnt64\\wcl.exe"
+            "compilerPath": "cl.exe"
         }
     ],
     "version": 4
