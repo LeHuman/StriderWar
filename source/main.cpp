@@ -41,9 +41,15 @@ int main() {
     size_t sprite_i = 0;
     size_t sprite_c = 0;
 
-    while (!kbhit()) {
+    bool run = true;
+
+    while (run) {
+        if (kbhit()) {
+            run = getch() != 'x';
+        }
+
         joysticks.update();
-        DOS::CGA::load_sprite(sprite_i, sprite_c, DOS::CGA::NONE, 0);
+        DOS::CGA::load_sprite(sprite_i, sprite_c, DOS::CGA::PERFECT, 0);
         sprite_i = abs(rand()) % *DOS::CGA::sprite_bank.length;
         sprite_c = ((sprite_c + 1) % 3) + 1;
 
@@ -163,7 +169,6 @@ int main() {
         }
     }
 
-    getch();
-    nosound();
+    DOS::Sound::silence();
     return 0;
 }
