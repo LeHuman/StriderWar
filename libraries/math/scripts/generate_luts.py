@@ -3,7 +3,7 @@ import os
 import re
 
 HEADER_FILES = ["include/dos/math/fixed/fixed_math.hpp", "include/dos/math/fixed/fixed.hpp"]
-OUTPUT_FILE = "include/luts.hpp"
+OUTPUT_FILE = "include/dos/math/luts.hpp"
 
 os.chdir(os.path.join(os.path.dirname(__file__), '..'))
 

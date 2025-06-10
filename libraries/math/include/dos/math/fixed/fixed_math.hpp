@@ -2,10 +2,10 @@
 
 #include "fixed.hpp"
 
-#define TRIG_RESOLUTION 255                     // 0-255 index = 0-360 degrees
-#define ATAN2_LUT_BITS 8
-#define ATAN2_LUT_SIZE 255
-#define LUT_RESOLUTION 255                      // 0 to 16 in steps of 1/16
+#define TRIG_RESOLUTION 127                     // 0-255 index = 0-360 degrees
+#define ATAN2_LUT_BITS 7
+#define ATAN2_LUT_SIZE 127
+#define LUT_RESOLUTION 127                      // 0 to 16 in steps of 1/16
 #define LUT_STEP_FIXED (1 << (FIXED_SHIFT - 4)) // 1/16 in 12.4 = 0x0010
 
 namespace DOS {
