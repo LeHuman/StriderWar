@@ -32,7 +32,7 @@ namespace CGA {
         PERFECT,
     };
 
-    static const size_t SPRITE_MEMORY_SIZE = 1 << 13;
+    static const size_t SPRITE_MEMORY_SIZE = 5000;
     extern uint8_t sprite_memory[SPRITE_MEMORY_SIZE];
     extern SpriteBank sprite_bank;
 
