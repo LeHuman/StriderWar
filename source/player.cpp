@@ -5,7 +5,7 @@
 
 #include "world.hpp"
 
-Player::Player(Joysticks::Player &input) : enabled_bullets(0), input(input), last_bullet(false), req_bullet(false), bounced(0) {
+Player::Player(DOS::Input::Interface &input) : enabled_bullets(0), input(input), last_bullet(false), req_bullet(false), bounced(0) {
     ship.x = DOS::Video::X_MAX / 2;
     ship.y = DOS::Video::Y_MAX / 2;
     ship.enabled = true;
@@ -21,8 +21,8 @@ static const Fixed bullet_vel_cmp = 1;
 
 void Player::step() {
     if (!input.alt) {
-        Fixed ix = (Fixed)(input.x - 2) / 6;
-        Fixed iy = (Fixed)(input.y - 2) / 6;
+        Fixed ix = (Fixed)(input.x) / 100;
+        Fixed iy = (Fixed)(input.y) / 100;
 
         ship.pulse(ix, iy);
     }

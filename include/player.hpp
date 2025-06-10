@@ -16,9 +16,9 @@ struct Player {
     int bounced;
     DOS::Draw::Line spark;
 
-    const Joysticks::Player &input;
+    const DOS::Input::Interface &input;
 
-    Player(Joysticks::Player &input);
+    Player(DOS::Input::Interface &input);
 
     void step();
 
