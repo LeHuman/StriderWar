@@ -1,21 +1,24 @@
 
+#include <iostream>
+
 #include <conio.h>
 #include <dos.h>
+#include <graph.h>
 #include <i86.h>
 #include <stdio.h>
 
 #include "dos/graphics.hpp"
 #include "dos/sound.hpp"
+#include "dos/time.hpp"
 #include "player.hpp"
 
 int main() {
     DOS::Video::initialize();
     DOS::Sound::initialize();
+    DOS::Input::Joystick::initialize();
 
-    Joysticks joysticks(0x201);
-
-    Player playerA(joysticks.playerA);
-    Player playerB(joysticks.playerB);
+    Player playerA(DOS::Input::Joystick::playerA);
+    Player playerB(DOS::Input::Joystick::playerB);
 
     uint8_t total_bullets = 0;
     uint16_t sound_down = 0;
@@ -43,19 +46,25 @@ int main() {
 
     bool run = true;
 
+    // DOS::Time::Timer timer;
+    // const uint32_t frameDuration = 1000; // target ~30 FPS
+
     while (run) {
+        // timer.beginFrame();
+
         if (kbhit()) {
             run = getch() != 'x';
         }
 
-        joysticks.update();
-        DOS::CGA::load_sprite(sprite_i, sprite_c, DOS::CGA::PERFECT, 0);
+        DOS::Input::Joystick::update();
+
+        // DOS::CGA::load_sprite(sprite_i, sprite_c, DOS::CGA::PERFECT, 0);
         sprite_i = abs(rand()) % *DOS::CGA::sprite_bank.length;
         sprite_c = ((sprite_c + 1) % 3) + 1;
 
         if (player_a_on) {
             playerA.step();
-        } else if (joysticks.playerA.fire || joysticks.playerA.alt) {
+        } else if (DOS::Input::Joystick::playerA.fire || DOS::Input::Joystick::playerA.alt) {
             player_a_on = true;
 
             sound(784);
@@ -85,11 +94,13 @@ int main() {
             sound(784);
             delay(100);
             nosound();
+        } else if (!player_b_on) {
+            DOS::Input::Joystick::playerA.calibrate_step();
         }
 
         if (player_b_on) {
             playerB.step();
-        } else if (joysticks.playerB.fire || joysticks.playerB.alt) {
+        } else if (DOS::Input::Joystick::playerB.fire || DOS::Input::Joystick::playerB.alt) {
             player_b_on = true;
 
             sound(1047);
@@ -119,6 +130,8 @@ int main() {
             sound(784);
             delay(100);
             nosound();
+        } else if (!player_a_on) {
+            DOS::Input::Joystick::playerB.calibrate_step();
         }
 
         if ((playerA.enabled_bullets + playerB.enabled_bullets) != total_bullets) {
@@ -167,6 +180,15 @@ int main() {
         if (player_b_on) {
             playerB.draw();
         }
+
+        // static uint16_t ty = 0;
+        // uint16_t time = timer.elapsedMs();
+        // uint8_t dist = time / 50;
+
+        // DOS::Draw::line(dist, ty, dist * 2, ty, 0);
+        // DOS::Draw::line(0, ty, dist, ty, sprite_c);
+
+        // ty = (ty + 1) % DOS::Video::HEIGHT;
     }
 
     DOS::Sound::silence();
