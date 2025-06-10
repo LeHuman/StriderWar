@@ -19,7 +19,8 @@ set(CMAKE_SYSTEM_NAME DOS)
 # -ei : force enums to be type int
 # -zp8 : struct packing align 8
 # -fpi87 : fpi87 inline 80x87
-add_compile_options(-bt=dos -mm -0 -d0 -zq -fr=nul -xd -onashi+x -s -oh -oi+ -ei -zp8 -fpi87 )
+add_compile_options(-bt=dos -mm -0 -d0 -zq -fr=nul -xd -onasx -s -oh -ei -zp8 -fpi87 ) #-oi+
+# add_compile_options(-bt=dos -mm -0 -d3)
 
 set(CMAKE_C_FLAGS "-za99")
 set(CMAKE_CXX_FLAGS "-ze -za0x")
@@ -33,6 +34,6 @@ add_subdirectory(libraries)
 
 # Add the executable target
 add_executable(${PROJECT_NAME} ${SOURCES})
-target_link_libraries(${PROJECT_NAME} DOSGraphics DOSInput DOSMath DOSSound)
+target_link_libraries(${PROJECT_NAME} DOSTime DOSGraphics DOSInput DOSMath DOSSound)
 
 include_directories(include)

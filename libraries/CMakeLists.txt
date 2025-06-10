@@ -1,3 +1,4 @@
+add_subdirectory(time)
 add_subdirectory(graphics)
 add_subdirectory(input)
 add_subdirectory(math)
