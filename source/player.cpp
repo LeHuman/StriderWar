@@ -17,12 +17,12 @@ Player::Player(DOS::Input::Interface &input) : enabled_bullets(0), input(input),
     }
 }
 
-static const Fixed bullet_vel_cmp = 1;
+static const Fixed bullet_vel_cmp = 0.5f;
 
 void Player::step() {
     if (!input.alt) {
-        Fixed ix = (Fixed)(input.x) / 100;
-        Fixed iy = (Fixed)(input.y) / 100;
+        Fixed ix = (Fixed)(input.x) / 300;
+        Fixed iy = (Fixed)(input.y) / 300;
 
         ship.pulse(ix, iy);
     }

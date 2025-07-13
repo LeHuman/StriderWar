@@ -3,13 +3,14 @@
 
 #include <conio.h>
 #include <dos.h>
+#include <dos/graphics.hpp>
+#include <dos/sound.hpp>
+#include <dos/time.hpp>
 #include <graph.h>
 #include <i86.h>
 #include <stdio.h>
 
-#include "dos/graphics.hpp"
-#include "dos/sound.hpp"
-#include "dos/time.hpp"
+#include "debug.hpp"
 #include "player.hpp"
 
 int main() {

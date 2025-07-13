@@ -16,16 +16,19 @@ namespace Input {
             playerB = State();
         }
 
-        void buildLUT(AxisCalibration &cal) {
+        void buildLUT(AxisCalibration &cal, bool invert = false) {
             if (cal.max == cal.min)
                 return;
+
+            const int iv = invert ? -1 : 1;
+
             for (int i = 0; i < LUT_SIZE; ++i) {
                 int val = (i - cal.min) * (RANGE_MAX - RANGE_MIN) / (cal.max - cal.min) - RANGE_MAX;
                 if (val < RANGE_MIN)
                     val = RANGE_MIN;
                 if (val > RANGE_MAX)
                     val = RANGE_MAX;
-                cal.lut[i] = val;
+                cal.lut[i] = val * iv;
             }
             cal.lut[cal.max / 2] = 0;
         }
@@ -55,7 +58,7 @@ namespace Input {
             }
 
             if (update_y) {
-                buildLUT(cal.y);
+                buildLUT(cal.y, true);
             }
         }
 
