@@ -5,13 +5,16 @@ Strider::Strider(int x, int y) : trail_count(2), last_count(0), count(1), draw_c
 Strider::Strider(int x, int y, int vx, int vy) : trail_count(2), last_count(0), count(1), draw_counter(0), draw_counter_limit(4), draw_counter_max(7), x(x), y(y), vx(vx), vy(vy), color(1), enabled(false), has_physics(false) {}
 
 void Strider::set_priority(uint8_t priority) {
-    static const uint8_t priority_map[6] = {
+    static const uint8_t priority_map[9] = {
         7,
         15,
         23,
         31,
         39,
         47,
+        64,
+        78,
+        127,
     };
 
     static const int trail_max = (sizeof(trail) / sizeof(trail[0]));
