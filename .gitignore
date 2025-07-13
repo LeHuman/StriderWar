@@ -1,3 +1,5 @@
 build
 help.txt
 media
+
+__pycache__

@@ -37,7 +37,9 @@
         "stdint.h": "c",
         "stdlib.h": "c",
         "math.h": "c",
-        "xutility": "c"
+        "xutility": "c",
+        "ctime": "cpp",
+        "cwchar": "cpp"
     },
     "sonarlint.pathToCompileCommands": "${workspaceFolder}\\build\\compile_commands.json",
 }

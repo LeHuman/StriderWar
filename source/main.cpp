@@ -42,26 +42,14 @@ int main() {
     delay(100);
     DOS::Sound::silence();
 
-    size_t sprite_i = 0;
-    size_t sprite_c = 0;
-
     bool run = true;
 
-    // DOS::Time::Timer timer;
-    // const uint32_t frameDuration = 1000; // target ~30 FPS
-
     while (run) {
-        // timer.beginFrame();
-
         if (kbhit()) {
             run = getch() != 'x';
         }
 
         DOS::Input::Joystick::update();
-
-        // DOS::CGA::load_sprite(sprite_i, sprite_c, DOS::CGA::PERFECT, 0);
-        sprite_i = abs(rand()) % *DOS::CGA::sprite_bank.length;
-        sprite_c = ((sprite_c + 1) % 3) + 1;
 
         if (player_a_on) {
             playerA.step();
@@ -181,15 +169,6 @@ int main() {
         if (player_b_on) {
             playerB.draw();
         }
-
-        // static uint16_t ty = 0;
-        // uint16_t time = timer.elapsedMs();
-        // uint8_t dist = time / 50;
-
-        // DOS::Draw::line(dist, ty, dist * 2, ty, 0);
-        // DOS::Draw::line(0, ty, dist, ty, sprite_c);
-
-        // ty = (ty + 1) % DOS::Video::HEIGHT;
     }
 
     DOS::Sound::silence();
