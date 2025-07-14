@@ -206,6 +206,19 @@ int main() {
     Player playerB(inputB, sit_mem_B);
     inputB.set_player(&playerB);
 
+    FILE *f = fopen("joystick.cal", "rb");
+    if (f) {
+        uint8_t *dataA = (uint8_t *)&DOS::Input::Joystick::playerA.cal;
+        uint8_t *dataB = (uint8_t *)&DOS::Input::Joystick::playerB.cal;
+        const size_t data_size = sizeof(DOS::Input::Joystick::playerA.cal);
+        fread(dataA, 1, data_size, f);
+        fread(dataB, 1, data_size, f);
+        fclose(f);
+        DOS::Draw::text(10, 10, "Joystick Cal Loaded", 3);
+        delay(100);
+        DOS::Draw::text(10, 10, "Joystick Cal Loaded", 0);
+    }
+
     DOS::CGA::display_cga("frame.cga", DOS::CGA::SEMI);
     DOS::CGA::display_cga("title.cga", DOS::CGA::SEMI);
     DOS::CGA::load_sprites("sprites.bin");
@@ -216,7 +229,36 @@ int main() {
     bool run = true;
     while (run) {
         if (kbhit()) {
-            run = getch() != 'x';
+            int ch = getch();
+            switch (ch) {
+                case 'x':
+                    run = false;
+                    break;
+                case 'y': {
+                    const uint8_t *dataA = (uint8_t *)&DOS::Input::Joystick::playerA.cal;
+                    const uint8_t *dataB = (uint8_t *)&DOS::Input::Joystick::playerB.cal;
+                    const size_t data_size = sizeof(DOS::Input::Joystick::playerA.cal);
+
+                    FILE *f = fopen("joystick.cal", "wb");
+                    if (!f) {
+                        printf("Could not open joystick.cal!\n");
+                        break;
+                    }
+
+                    size_t written = fwrite(dataA, 1, data_size, f);
+                    written += fwrite(dataB, 1, data_size, f);
+                    if (written != (data_size * 2)) {
+                        printf("Write failed!\n");
+                        fclose(f);
+                        break;
+                    }
+
+                    fclose(f);
+
+                } break;
+                default:
+                    break;
+            }
         }
 
         inputB.update();

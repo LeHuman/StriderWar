@@ -45,7 +45,13 @@
         "xstring": "cpp",
         "xmemory": "cpp",
         "cstdarg": "cpp",
-        "xlocale": "cpp"
+        "xlocale": "cpp",
+        "format": "cpp",
+        "iosfwd": "cpp",
+        "xlocmon": "cpp",
+        "xlocnum": "cpp",
+        "xloctime": "cpp",
+        "cfloat": "cpp"
     },
     "sonarlint.pathToCompileCommands": "${workspaceFolder}\\build\\compile_commands.json"
 }

@@ -9,7 +9,7 @@
                 "C:/WATCOM/h/**"
             ],
             "defines": [
-                "_DEBUG",
+                // "_DEBUG",
                 "UNICODE",
                 "_UNICODE",
                 "__WATCOMC__",

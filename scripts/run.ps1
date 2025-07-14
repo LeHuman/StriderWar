@@ -1,7 +1,7 @@
 $dosbox_path = "C:/DOSBox-X/dosbox-x.exe"
 
 # TODO: define DOSBOX and rebuild here
-cmake --build build --config Debug --target all
+cmake --build build --config Release --target all
 
 cp .\build\DOSTest.exe .\dev\DOSTest.exe
 
