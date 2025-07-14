@@ -204,6 +204,7 @@ int main() {
 
     dummy::Dummy inputB;
     Player playerB(inputB, sit_mem_B);
+    inputB.set_target(&playerA);
     inputB.set_player(&playerB);
 
     FILE *f = fopen("joystick.cal", "rb");
@@ -264,7 +265,7 @@ int main() {
         inputB.update();
         DOS::Input::Joystick::update();
 
-        debug::serial_printf("x:%i y:%i x:%i y:%i\n", DOS::Input::Joystick::playerA.x, DOS::Input::Joystick::playerA.y, inputB.x, inputB.y);
+        // debug::serial_printf("x:%i y:%i x:%i y:%i\n", DOS::Input::Joystick::playerA.x, DOS::Input::Joystick::playerA.y, inputB.x, inputB.y);
         // debug::serial_printf("x:%i y:%i dx:%i dy:%i\n", (int)playerA.ship.x, (int)playerA.ship.y, (int)world::X_CENTER - (int)playerA.ship.x, (int)world::Y_CENTER - (int)playerA.ship.y);
 
         if (!playerA.valid() && (DOS::Input::Joystick::playerA.fire || DOS::Input::Joystick::playerA.alt)) {
