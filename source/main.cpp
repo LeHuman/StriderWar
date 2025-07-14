@@ -156,7 +156,11 @@ int main() {
 
     DOS::Video::initialize();
     DOS::Sound::initialize();
-    DOS::Input::Joystick::initialize();
+#ifdef DOSBOX
+    DOS::Input::Joystick::initialize(true);
+#else
+    DOS::Input::Joystick::initialize(false);
+#endif
 
     Player playerA(DOS::Input::Joystick::playerA);
 

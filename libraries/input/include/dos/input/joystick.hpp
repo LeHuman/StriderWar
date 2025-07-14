@@ -49,7 +49,7 @@ namespace Input {
             State() : rawX(0), rawY(0), cal() {};
         };
 
-        void initialize();
+        void initialize(bool invertY);
         void update();
 
         extern State playerA;

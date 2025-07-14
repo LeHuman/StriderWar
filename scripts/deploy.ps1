@@ -3,6 +3,9 @@ $source = "F:\GitHub\dostest\build\DOSTest.exe"
 $destination = "D:\APPS\DOSTest.exe"
 $driveLetter = "D"
 
+Write-Host "Building"
+cmake --build build --config Debug --target all
+
 Write-Host "Copying $source to $destination..."
 Copy-Item -Path $source -Destination $destination -Force
 

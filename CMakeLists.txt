@@ -7,6 +7,8 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 # Specify the target system as DOS
 set(CMAKE_SYSTEM_NAME DOS)
 
+# add_compile_definitions(DOSBOX)
+
 # -bt=dos : Compile for DOS
 # -mm : Medium Memory model
 # -0 : 8086 or higher

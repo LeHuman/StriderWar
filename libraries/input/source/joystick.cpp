@@ -11,7 +11,10 @@ namespace Input {
         State playerA;
         State playerB;
 
-        void initialize() {
+        bool invertY = false;
+
+        void initialize(bool invertY) {
+            Joystick::invertY = invertY;
             playerA = State();
             playerB = State();
         }
@@ -58,7 +61,7 @@ namespace Input {
             }
 
             if (update_y) {
-                buildLUT(cal.y, true);
+                buildLUT(cal.y, invertY);
             }
         }
 

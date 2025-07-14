@@ -4,8 +4,8 @@
 #include <dos.h>
 #include <stdlib.h>
 
+#ifdef DEBUG_ENABLE_FUNCTIONS
 namespace debug {
-
 void joystick_draw_A() {
     const uint16_t x = DOS::Input::Joystick::playerA.x + (DOS::Video::WIDTH / 2);
     const uint16_t y = DOS::Input::Joystick::playerA.y + (DOS::Video::HEIGHT / 2);
@@ -79,11 +79,11 @@ void serial_init() {
     // 9600 baud on 1.8432 MHz clock: divisor = 12
     // 115200 baud : divisor = 1
     outp(COM1 + 3, 0x80); // Set DLAB = 1
-    outp(COM1 + 0, 1);   // Divisor LSB
+    outp(COM1 + 0, 1);    // Divisor LSB
     outp(COM1 + 1, 0);    // Divisor MSB
     outp(COM1 + 3, 0x03); // 8 bits, no parity, 1 stop (DLAB=0)
     outp(COM1 + 2, 0xC7); // Enable FIFO, clear them, trigger level 14 bytes
     outp(COM1 + 4, 0x0B); // IRQs enabled, RTS/DSR set
 }
-
 } // namespace debug
+#endif
