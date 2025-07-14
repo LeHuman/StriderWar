@@ -18,6 +18,7 @@ namespace Draw {
 
     void text(int x, int y, char *string, uint8_t color);
     void line(int x0, int y0, int x1, int y1, uint8_t color);
+    void rectangle(int x0, int y0, int x1, int y1, uint8_t color, bool fill = true);
 
     static inline void line(const Line &line, uint8_t color) {
         DOS::Draw::line(line.x0, line.y0, line.x1, line.y1, color);
