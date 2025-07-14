@@ -5,7 +5,7 @@
 
 #include "world.hpp"
 
-Player::Player(DOS::Input::Interface &input) : enabled_bullets(0), input(input), last_bullet(false), req_bullet(false), bounced(0) {
+Player::Player(DOS::Input::Interface &input) : id(-1), enabled_bullets(0), input(input), last_bullet(false), req_bullet(false), bounced(0) {
     ship.x = DOS::Video::X_MAX / 2;
     ship.y = DOS::Video::Y_MAX / 2;
     ship.enabled = true;
@@ -71,8 +71,8 @@ void Player::step() {
             ++enabled_bullets;
             bullet.x = ship.x;
             bullet.y = ship.y;
-            bullet.vx = ship.vx * bullet_speed;
-            bullet.vy = ship.vy * bullet_speed;
+            bullet.vx = ship.vx * world::bullet_speed;
+            bullet.vy = ship.vy * world::bullet_speed;
         }
 
         bullet.step();

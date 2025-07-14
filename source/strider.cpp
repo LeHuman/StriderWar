@@ -1,5 +1,7 @@
 #include "strider.hpp"
 
+#include "world.hpp"
+
 Strider::Strider() : trail_count(2), last_count(0), count(1), draw_counter(0), draw_counter_limit(4), draw_counter_max(7), x(0), y(0), vx(0), vy(0), color(1), enabled(false), has_physics(false) {}
 Strider::Strider(int x, int y) : trail_count(2), last_count(0), count(1), draw_counter(0), draw_counter_limit(4), draw_counter_max(7), x(x), y(y), vx(0), vy(0), color(1), enabled(false), has_physics(false) {}
 Strider::Strider(int x, int y, int vx, int vy) : trail_count(2), last_count(0), count(1), draw_counter(0), draw_counter_limit(4), draw_counter_max(7), x(x), y(y), vx(vx), vy(vy), color(1), enabled(false), has_physics(false) {}
@@ -45,8 +47,8 @@ void Strider::step() {
     if (has_physics) {
         // vy += gravity;
 
-        vx *= friction;
-        vy *= friction;
+        vx *= world::friction;
+        vy *= world::friction;
     }
 
     x += vx;
@@ -54,26 +56,26 @@ void Strider::step() {
 
     Fixed offset(FLOAT2FIXED(0.01f), true);
 
-    if (x <= X_MIN) {
-        x = X_MIN;
+    if (x <= world::X_MIN) {
+        x = world::X_MIN;
         x += offset;
         bounce.x = true;
     }
 
-    if (x >= X_MAX) {
-        x = X_MAX;
+    if (x >= world::X_MAX) {
+        x = world::X_MAX;
         x -= offset;
         bounce.x = true;
     }
 
-    if (y <= Y_MIN) {
-        y = Y_MIN;
+    if (y <= world::Y_MIN) {
+        y = world::Y_MIN;
         y += offset;
         bounce.y = true;
     }
 
-    if (y >= Y_MAX) {
-        y = Y_MAX;
+    if (y >= world::Y_MAX) {
+        y = world::Y_MAX;
         y -= offset;
         bounce.y = true;
     }
@@ -81,10 +83,10 @@ void Strider::step() {
     if (has_physics && (bounce.y || bounce.x)) {
         bounce.angle = DOS::Math::Fix::atan2(vy, vx);
         if (bounce.x) {
-            vx *= bounce_mult;
+            vx *= world::bounce_mult;
         }
         if (bounce.y) {
-            vy *= bounce_mult;
+            vy *= world::bounce_mult;
         }
     }
 
@@ -98,8 +100,8 @@ void Strider::draw(bool force) {
     }
     trail[count].x0 = x;
     trail[count].y0 = y;
-    trail[count].x1 = x - vx * (tail_mult + (draw_counter_max / 16));
-    trail[count].y1 = y - vy * (tail_mult + (draw_counter_max / 16));
+    trail[count].x1 = x - vx * (world::tail_mult + (draw_counter_max / 16));
+    trail[count].y1 = y - vy * (world::tail_mult + (draw_counter_max / 16));
 
     DOS::Draw::line(trail[count], color);
     DOS::Draw::line(trail[last_count], 0);

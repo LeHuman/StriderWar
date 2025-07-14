@@ -4,8 +4,6 @@
 #include <dos/math.hpp>
 #include <stdlib.h>
 
-#include "world.hpp"
-
 class Strider {
 private:
     DOS::Draw::Line trail[4];

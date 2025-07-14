@@ -28,7 +28,7 @@ set(CMAKE_CXX_FLAGS "-ze -za0x")
 # Define macros specific to the target environment
 add_compile_definitions(_M_I86 __DOS__ __MEDIUM__)
 
-file(GLOB_RECURSE SOURCES source/*.cpp source/*.c)
+file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS source/*.cpp source/*.c)
 
 add_subdirectory(libraries)
 

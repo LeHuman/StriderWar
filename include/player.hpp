@@ -6,6 +6,7 @@
 #include "strider.hpp"
 
 struct Player {
+    int id;
     Strider ship;
     Strider bullets[2];
     uint8_t enabled_bullets;
@@ -19,6 +20,10 @@ struct Player {
     const DOS::Input::Interface &input;
 
     Player(DOS::Input::Interface &input);
+
+    inline bool valid() {
+        return id != -1;
+    }
 
     void step();
 
