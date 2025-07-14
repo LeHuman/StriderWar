@@ -42,7 +42,8 @@
         "cwchar": "cpp",
         "initializer_list": "cpp",
         "utility": "cpp",
-        "xstring": "cpp"
+        "xstring": "cpp",
+        "xmemory": "cpp"
     },
     "sonarlint.pathToCompileCommands": "${workspaceFolder}\\build\\compile_commands.json",
 }

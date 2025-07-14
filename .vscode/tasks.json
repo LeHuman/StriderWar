@@ -1,0 +1,20 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Dosbox",
+            "type": "shell",
+            "options": {
+                "statusbar": {
+                    "icon": {
+                        "id": "play"
+                    },
+                    "color": "#17f310"
+                }
+            },
+            "command": "./scripts/run.ps1"
+        }
+    ]
+}
