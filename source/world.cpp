@@ -30,10 +30,10 @@ void explode(Strider &bullet) {
     const Fixed &x = bullet.x;
     const Fixed &y = bullet.y;
 
-    DOS::Draw::pixel(x - blast_radius, y - blast_radius, 2);
-    DOS::Draw::pixel(x - blast_radius, y + blast_radius, 2);
-    DOS::Draw::pixel(x + blast_radius, y - blast_radius, 2);
-    DOS::Draw::pixel(x + blast_radius, y + blast_radius, 2);
+    DOS::Draw::pixel(x - blast_radius, y - blast_radius, 3);
+    DOS::Draw::pixel(x - blast_radius, y + blast_radius, 3);
+    DOS::Draw::pixel(x + blast_radius, y - blast_radius, 3);
+    DOS::Draw::pixel(x + blast_radius, y + blast_radius, 3);
 
     for (size_t i = 0; i < current_players; i++) {
         const Fixed &sx = players[i]->ship.x;

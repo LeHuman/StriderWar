@@ -23,7 +23,7 @@ namespace CGA {
         static const uint8_t color_map[4] = {0x00, 0x55, 0xAA, 0xFF};
         color = color_map[color & 0x03];
 
-        if ((color == 0) && (transparent != NONE)) {
+        if ((color == 0) && (transparent == SEMI)) {
             return None;
         }
 

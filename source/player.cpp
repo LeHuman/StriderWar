@@ -5,14 +5,14 @@
 
 #include "world.hpp"
 
-Player::Player(DOS::Input::Interface &input) : id(-1), enabled_bullets(0), input(input), last_bullet(false), req_bullet(false), bounced(0) {
+Player::Player(DOS::Input::Interface &input, situation_t &situation_mem) : id(-1), enabled_bullets(0), input(input), last_bullet(false), req_bullet(false), bounced(0), situation(situation_mem) {
     ship.x = world::X_CENTER;
     ship.y = world::Y_CENTER;
     ship.enabled = true;
     ship.has_physics = true;
     ship.color = 1;
     for (size_t i = 0; i < sizeof(bullets) / sizeof(bullets[0]); i++) {
-        bullets[i].color = 2;
+        bullets[i].color = 3;
         bullets[i].set_priority(1);
     }
 }
@@ -55,8 +55,13 @@ void Player::step() {
 
     bool fire = false;
 
-    if (req_bullet != last_bullet && (DOS::Math::Fix::abs(ship.vx) > bullet_vel_cmp || DOS::Math::Fix::abs(ship.vy) > bullet_vel_cmp)) {
-        fire = req_bullet;
+    if (req_bullet != last_bullet) {
+        if (DOS::Math::Fix::abs(ship.vx) > bullet_vel_cmp || DOS::Math::Fix::abs(ship.vy) > bullet_vel_cmp) {
+            fire = req_bullet;
+            situation.panel.low_speed = P_SS_OFF;
+        } else if (req_bullet) {
+            situation.panel.low_speed = P_SS_FAIR;
+        }
         last_bullet = req_bullet;
     }
 
@@ -66,8 +71,7 @@ void Player::step() {
         // TODO: Delay on reenabled bullet
         if (input.alt && bullet.enabled) {
             bullet.bounce.x = true;
-        } else 
-        if (fire && !bullet.enabled) {
+        } else if (fire && !bullet.enabled) {
             fire = false;
             bullet.enabled = true;
             ++enabled_bullets;
@@ -87,11 +91,17 @@ void Player::step() {
             --enabled_bullets;
             world::explode(bullet);
         }
+
+        // TODO: FAIL status on permanently disabled bullet
+        situation.bullet[i].indicator = bullet.enabled ? P_SS_FAIR : P_SS_GOOD;
     }
 
-    for (size_t i = 0; i < sizeof(bullets) / sizeof(bullets[0]); i++) {
+    for (size_t i = 0; i < MAX_BULLETS; i++) {
         bullets[i].set_priority(enabled_bullets + 1);
     }
+
+    // TODO: account for permanently disabled bullets
+    situation.panel.gun_ready = (enabled_bullets >= MAX_BULLETS) ? P_SS_FAIR : P_SS_GOOD;
 }
 
 void Player::draw() {

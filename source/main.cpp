@@ -14,6 +14,7 @@
 #include "debug.hpp"
 #include "dummy.hpp"
 #include "player.hpp"
+#include "sprite_map.hpp"
 #include "world.hpp"
 
 void temp_handle_sound(Player &playerA, Player &playerB) {
@@ -146,9 +147,46 @@ void temp_play_B_join() {
     nosound();
 }
 
+void temp_set_sprite(Player::s_status &status, size_t sprite_id) {
+    uint8_t color = 0;
+
+    switch (status >> 4) {
+        case Player::P_SS_OFF_DONE:
+            color = 0;
+            status = Player::P_SS_OFF_DONE;
+            break;
+        case Player::P_SS_GOOD_DONE:
+            color = 1;
+            status = Player::P_SS_GOOD_DONE;
+            break;
+        case Player::P_SS_FAIL_DONE:
+            color = 2;
+            status = Player::P_SS_FAIL_DONE;
+            break;
+        case Player::P_SS_FAIR_DONE:
+            color = 3;
+            status = Player::P_SS_FAIR_DONE;
+            break;
+        default:
+            return;
+    }
+
+    DOS::CGA::load_sprite(sprite_id, color, DOS::CGA::PERFECT, 0);
+}
+
+void temp_player_sprite_handle(Player &player) {
+    temp_set_sprite(player.situation.bullet[0].indicator, sprite::a_bullet_indicator_0);
+    temp_set_sprite(player.situation.bullet[1].indicator, sprite::a_bullet_indicator_1);
+    // temp_set_sprite(player.situation.panel.gun_ready, sprite::a_p_gun_ready);
+    temp_set_sprite(player.situation.panel.low_speed, sprite::a_bullet_body_1);
+}
+
 void clear_screen() {
     DOS::Draw::rectangle(world::X_MIN - 4, world::Y_MIN - 4, world::X_MAX + 4, world::Y_MAX + 4, 0, true);
 }
+
+static Player::situation_t sit_mem_A;
+static Player::situation_t sit_mem_B;
 
 int main() {
     debug::serial_init();
@@ -162,10 +200,10 @@ int main() {
     DOS::Input::Joystick::initialize(false);
 #endif
 
-    Player playerA(DOS::Input::Joystick::playerA);
+    Player playerA(DOS::Input::Joystick::playerA, sit_mem_A);
 
     dummy::Dummy inputB;
-    Player playerB(inputB);
+    Player playerB(inputB, sit_mem_B);
     inputB.set_player(&playerB);
 
     DOS::CGA::display_cga("frame.cga", DOS::CGA::SEMI);
@@ -204,6 +242,7 @@ int main() {
         }
 
         temp_handle_sound(playerA, playerB);
+        temp_player_sprite_handle(playerA);
 
         for (size_t i = 0; i < world::current_players; i++) {
             world::players[i]->draw();

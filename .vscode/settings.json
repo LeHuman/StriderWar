@@ -44,7 +44,8 @@
         "utility": "cpp",
         "xstring": "cpp",
         "xmemory": "cpp",
-        "cstdarg": "cpp"
+        "cstdarg": "cpp",
+        "xlocale": "cpp"
     },
     "sonarlint.pathToCompileCommands": "${workspaceFolder}\\build\\compile_commands.json"
 }

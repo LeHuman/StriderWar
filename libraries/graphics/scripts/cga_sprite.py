@@ -1,5 +1,8 @@
+import argparse
 from array import array
 from concurrent.futures import Future, ThreadPoolExecutor
+import glob
+import json
 import os
 import sys
 import imageio.v3 as iio
@@ -78,11 +81,19 @@ def next_blank_color():
 
 
 if __name__ == "__main__":
-    if len(sys.argv) < 3:
-        print("Usage: cga_sprite.py input.png output/dir")
-        sys.exit(1)
+    parser = argparse.ArgumentParser(
+        prog='PNG to CGA Sprites',
+        description='Convert PNGs to CGA Sprites for the IBM PC JR')
 
-    input_path = sys.argv[1]
+    parser.add_argument('input', help="The input.png to scrape for sprites")
+    parser.add_argument('output_dir', help="The output directory to spit out PNGs and other artifacts")
+    parser.add_argument('-m', '--map_dir', help="A directory of PNGs to use for mapping, their names will be used in generating the json if they are a pixel perfect match. NOTE: it is advised to generate sprites without this option, rename them, and then regenerate")
+
+    args = parser.parse_args(sys.argv[1:])
+
+    input_path = args.input
+    output_dir = args.output_dir
+    map_dir = args.map_dir if os.path.isdir(args.map_dir) else None
     raw_filepath, _ = os.path.splitext(input_path)
     filename = os.path.split(raw_filepath)[-1]
     img = Image.open(input_path)
@@ -144,6 +155,17 @@ if __name__ == "__main__":
 
     # IMPROVE: Ensure 8 byte padding
 
+    mapping_cache = {}
+
+    if map_dir:
+        for png in glob.iglob(os.path.join(map_dir, '*.png')):
+            root, _ext = os.path.splitext(png)
+            _head, tail = os.path.split(root)
+            map_img = Image.open(png).tobytes()
+            mapping_cache[map_img] = tail
+
+    mapping = {}
+
     i = 0
     total_bytes = 0
     for sprite in sprites:
@@ -160,7 +182,7 @@ if __name__ == "__main__":
             continue  # Skip empty sprites
 
         offsets, masks = zip(*offset_map.items())
-        
+
         # Pad masks
         if len(masks) % 2 != 0:
             masks = list(masks)
@@ -172,7 +194,7 @@ if __name__ == "__main__":
             byte_array += array('H', [len(offset_map)]).tobytes()
             byte_array += array('H', offsets).tobytes()
             byte_array += array('B', masks).tobytes()
-            
+
             print(f"S:{len(byte_arrays)} {len(offset_map)} @ {total_bytes}")
             total_bytes += (len(offset_map) * 3) + 2 + isinstance(masks, list)
 
@@ -182,15 +204,27 @@ if __name__ == "__main__":
             sprite_img = Image.new("RGBA", (SCREEN_WIDTH, SCREEN_HEIGHT), (0, 0, 0, 1))
             draw = ImageDraw.Draw(sprite_img)
             for x, y in sprite:
-                draw.point((x, y), fill=(0, 0, 0, 255))  # white pixel
+                draw.point((x, y), fill=(255, 255, 255, 255))  # white pixel
 
-            sprite_img.save(out_path_png.format(id=i))  # Write PNG file
+            sprite_filename = out_path_png.format(id=i)
+            sprite_img.save(sprite_filename)  # Write PNG file
+
+            # Save mapping
+            if sprite_img.tobytes() in mapping_cache:
+                mapping[mapping_cache[sprite_img.tobytes()]] = i
+            else:
+                root, _ext = os.path.splitext(sprite_filename)
+                _head, tail = os.path.split(root)
+                mapping[tail] = i
 
         i += 1
         if i >= 255:
             print("Too many sprites, stopping")
             break
-    
+
+    with open(os.path.join(output_dir, "map.json"), mode="w", encoding="utf-8") as file:
+        json.dump(mapping, file, indent=4)
+
     print(f"Sprite Size: {total_bytes}")
 
     with open(out_path, "wb") as bin:
@@ -201,9 +235,9 @@ if __name__ == "__main__":
         JUMP_TABLE_TYPE_SIZE = 2  # uint16_t
         JUMP_TABLE_SIZE = len(byte_arrays) * JUMP_TABLE_TYPE_SIZE
         total_size = JUMP_TABLE_SIZE + JUMP_TABLE_TYPE_SIZE
-        
+
         print(f"Jump Table Size: {total_size}")
-        
+
         # Write jump table size
         bin.write(array('H', [len(byte_arrays)]).tobytes())
 
@@ -214,7 +248,7 @@ if __name__ == "__main__":
 
         for u8s in byte_arrays:
             bin.write(u8s)
-        
+
         print(f"Total Bytes: {bin.tell()}")
 
         bin.seek(0)
