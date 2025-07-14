@@ -12,6 +12,7 @@
 #include <stdio.h>
 
 #include "debug.hpp"
+#include "dummy.hpp"
 #include "player.hpp"
 #include "world.hpp"
 
@@ -19,8 +20,9 @@ void temp_handle_sound(Player &playerA, Player &playerB) {
     static uint8_t total_bullets = 0;
     static uint16_t sound_down = 0;
     static uint16_t sound_blap = 0;
+    static uint16_t sound_crrsh = 0;
     static uint16_t sound_freq = 0;
-    static bool silent = 0;
+    static bool silent = false;
 
     if ((playerA.enabled_bullets + playerB.enabled_bullets) != total_bullets) {
         if ((playerA.enabled_bullets + playerB.enabled_bullets) > total_bullets) {
@@ -28,6 +30,10 @@ void temp_handle_sound(Player &playerA, Player &playerB) {
             silent = false;
         } else if ((playerA.enabled_bullets + playerB.enabled_bullets) == 0) {
             sound_down /= 2;
+        }
+        if ((playerA.enabled_bullets + playerB.enabled_bullets) < total_bullets) {
+            sound_crrsh = 60;
+            silent = false;
         }
         total_bullets = playerA.enabled_bullets + playerB.enabled_bullets;
     }
@@ -47,10 +53,18 @@ void temp_handle_sound(Player &playerA, Player &playerB) {
         sound_down = 0;
     }
 
-    if (sound_blap) {
-        sound_freq = sound_blap;
+    if (sound_crrsh > 45) {
+        sound_crrsh--;
+    } else if (sound_crrsh != 0) {
+        sound_crrsh = 0;
+    }
+
+    if (sound_crrsh) {
+        sound_freq = sound_crrsh;
     } else if (sound_down) {
         sound_freq = sound_down;
+    } else if (sound_blap) {
+        sound_freq = sound_blap;
     } else if (!silent) {
         nosound();
         silent = true;
@@ -145,7 +159,10 @@ int main() {
     DOS::Input::Joystick::initialize();
 
     Player playerA(DOS::Input::Joystick::playerA);
-    Player playerB(DOS::Input::Joystick::playerB);
+
+    dummy::Dummy inputB;
+    Player playerB(inputB);
+    inputB.set_player(&playerB);
 
     DOS::CGA::display_cga("frame.cga", DOS::CGA::SEMI);
     DOS::CGA::display_cga("title.cga", DOS::CGA::SEMI);
@@ -160,7 +177,11 @@ int main() {
             run = getch() != 'x';
         }
 
+        inputB.update();
         DOS::Input::Joystick::update();
+
+        debug::serial_printf("x:%i y:%i x:%i y:%i\n", DOS::Input::Joystick::playerA.x, DOS::Input::Joystick::playerA.y, inputB.x, inputB.y);
+        // debug::serial_printf("x:%i y:%i dx:%i dy:%i\n", (int)playerA.ship.x, (int)playerA.ship.y, (int)world::X_CENTER - (int)playerA.ship.x, (int)world::Y_CENTER - (int)playerA.ship.y);
 
         if (!playerA.valid() && (DOS::Input::Joystick::playerA.fire || DOS::Input::Joystick::playerA.alt)) {
             temp_play_A_join();

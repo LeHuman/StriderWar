@@ -2,5 +2,6 @@ build
 help.txt
 media
 dev
+watcom-wiki
 
 __pycache__

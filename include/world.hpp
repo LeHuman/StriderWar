@@ -24,6 +24,9 @@ static const uint16_t X_MAX = DOS::Video::WIDTH * 0.7875f;
 static const uint16_t Y_MIN = DOS::Video::HEIGHT * 0.04f;
 static const uint16_t Y_MAX = DOS::Video::HEIGHT * 0.96f;
 
+static const uint16_t X_CENTER = DOS::Video::WIDTH / 2;
+static const uint16_t Y_CENTER = DOS::Video::HEIGHT / 2;
+
 static const size_t MAX_PLAYERS = 2;
 static const size_t MAX_EXPLOSIONS = 8;
 

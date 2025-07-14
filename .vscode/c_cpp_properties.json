@@ -22,6 +22,8 @@
             "cppStandard": "c++98",
             "intelliSenseMode": "msvc-x86",
             "compilerArgs": [
+                "/X",
+                "/NODEFAULTLIB",
                 "/std:c++14",
                 "/Za", // disable MS extensions
                 "/W4", // high warning level

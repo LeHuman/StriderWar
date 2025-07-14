@@ -6,8 +6,8 @@
 #include "world.hpp"
 
 Player::Player(DOS::Input::Interface &input) : id(-1), enabled_bullets(0), input(input), last_bullet(false), req_bullet(false), bounced(0) {
-    ship.x = DOS::Video::X_MAX / 2;
-    ship.y = DOS::Video::Y_MAX / 2;
+    ship.x = world::X_CENTER;
+    ship.y = world::Y_CENTER;
     ship.enabled = true;
     ship.has_physics = true;
     ship.color = 1;

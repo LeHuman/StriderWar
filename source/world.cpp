@@ -4,6 +4,7 @@
 
 #include <dos/graphics.hpp>
 #include <dos/math.hpp>
+#include <stdlib.h>
 
 #include "debug.hpp"
 
@@ -43,6 +44,7 @@ void explode(Strider &bullet) {
 
         if (((dx * dx) + (dy * dy)) < (blast_radius * blast_radius / 2)) {
             DOS::Draw::line(x, y, sx, sy, 2);
+            players[i]->ship.pulse(rand() - (RAND_MAX / 2), rand() - (RAND_MAX / 2));
             debug::serial_print("hit\n");
         }
     }
