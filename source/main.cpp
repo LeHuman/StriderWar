@@ -8,6 +8,7 @@
 #include <dos/time.hpp>
 #include <graph.h>
 #include <i86.h>
+#include <process.h>
 #include <stdio.h>
 
 #include "debug.hpp"
@@ -136,6 +137,9 @@ void clear_screen() {
 }
 
 int main() {
+    debug::serial_init();
+    debug::serial_printf("start");
+
     DOS::Video::initialize();
     DOS::Sound::initialize();
     DOS::Input::Joystick::initialize();
@@ -143,7 +147,6 @@ int main() {
     Player playerA(DOS::Input::Joystick::playerA);
     Player playerB(DOS::Input::Joystick::playerB);
 
-    // DOS::Draw::rectangle(world::X_MIN, world::Y_MIN, world::X_MAX, world::Y_MAX, 0, true);
     DOS::CGA::display_cga("frame.cga", DOS::CGA::SEMI);
     DOS::CGA::display_cga("title.cga", DOS::CGA::SEMI);
     DOS::CGA::load_sprites("sprites.bin");

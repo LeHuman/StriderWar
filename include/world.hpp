@@ -25,10 +25,12 @@ static const uint16_t Y_MIN = DOS::Video::HEIGHT * 0.04f;
 static const uint16_t Y_MAX = DOS::Video::HEIGHT * 0.96f;
 
 static const size_t MAX_PLAYERS = 2;
+static const size_t MAX_EXPLOSIONS = 8;
 
 extern size_t current_players;
 extern Player *players[MAX_PLAYERS];
 
 int add_player(Player &player);
+void explode(Strider &bullet);
 
 } // namespace world

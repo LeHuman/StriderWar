@@ -77,6 +77,7 @@ void serial_printf(const char *fmt, ...) {
 
 void serial_init() {
     // 9600 baud on 1.8432 MHz clock: divisor = 12
+    // 115200 baud : divisor = 1
     outp(COM1 + 3, 0x80); // Set DLAB = 1
     outp(COM1 + 0, 1);   // Divisor LSB
     outp(COM1 + 1, 0);    // Divisor MSB

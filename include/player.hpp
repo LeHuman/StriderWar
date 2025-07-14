@@ -6,9 +6,10 @@
 #include "strider.hpp"
 
 struct Player {
+    static const size_t MAX_BULLETS = 2;
     int id;
     Strider ship;
-    Strider bullets[2];
+    Strider bullets[MAX_BULLETS];
     uint8_t enabled_bullets;
 
     bool last_bullet;

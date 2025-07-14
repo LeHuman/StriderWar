@@ -43,7 +43,8 @@
         "initializer_list": "cpp",
         "utility": "cpp",
         "xstring": "cpp",
-        "xmemory": "cpp"
+        "xmemory": "cpp",
+        "cstdarg": "cpp"
     },
     "sonarlint.pathToCompileCommands": "${workspaceFolder}\\build\\compile_commands.json",
 }
