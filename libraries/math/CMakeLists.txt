@@ -4,14 +4,14 @@ project(DOSMath VERSION 0.1.0 LANGUAGES C CXX)
 # Generate LUTs
 find_package(Python3 REQUIRED)
 add_custom_command(
-    OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/generated_luts.hpp
+    OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/include/dos/math/luts.hpp
     COMMAND ${CMAKE_COMMAND} -E echo "Generating LUTs from fixed_math.hpp..."
     COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/scripts/generate_luts.py
     DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/scripts/generate_luts.py ${CMAKE_CURRENT_SOURCE_DIR}/include/dos/math/fixed/fixed_math.hpp
     DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/scripts/generate_luts.py ${CMAKE_CURRENT_SOURCE_DIR}/include/dos/math/fixed/fixed.hpp
     COMMENT "Generating lookup tables"
 )
-add_custom_target(generate_luts DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/generated_luts.hpp)
+add_custom_target(generate_luts DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/include/dos/math/luts.hpp)
 
 file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS source/*.cpp source/*.c)
 file(GLOB_RECURSE HEADERS CONFIGURE_DEPENDS RELATIVE include/*.h include/*.hpp)
