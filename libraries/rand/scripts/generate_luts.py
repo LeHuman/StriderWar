@@ -1,6 +1,6 @@
 import math
 import os
-from random import randint
+from random import Random
 import re
 
 HEADER_FILES = ["include/dos/rand/rand.hpp"]
@@ -29,8 +29,9 @@ def parse_consts(filenames):
 
 def get_rand_table(size):
     out = [f"static const int16_t random_ints[{size}] = {{"]
+    rnd = Random(13378085)
     for _ in range(size):
-        val = randint(INT_MIN, INT_MAX)
+        val = rnd.randint(INT_MIN, INT_MAX)
         out.append(f"    {val},")
     out.append("};\n")
     return "\n".join(out)

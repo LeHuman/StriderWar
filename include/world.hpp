@@ -12,7 +12,7 @@ static const Fixed friction = 0.999f;
 static const Fixed bounce_mult = -0.92f;
 static const Fixed tail_mult = 2.0f;
 
-static const Fixed bullet_speed = 2.0f;
+static const Fixed bullet_speed = 0.3f;
 static const Fixed bullet_tail = 2.0f;
 
 // (200-8) / 200=0.96
@@ -34,6 +34,6 @@ extern size_t current_players;
 extern Player *players[MAX_PLAYERS];
 
 int add_player(Player &player);
-void explode(Strider &bullet);
+void explode(Bullet &bullet);
 
 } // namespace world
