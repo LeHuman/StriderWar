@@ -5,10 +5,98 @@
 
 #include "strider.hpp"
 
+namespace Condition {
+enum T {
+    DISABLED,
+    LOW,
+    MID,
+    HIGH,
+};
+}
+
+struct Bullet {
+    Strider entity;
+
+    struct
+    {
+        int speed;
+        int damage;
+    } mult;
+
+    struct
+    {
+        Condition::T payload;
+        Condition::T body;
+        Condition::T booster;
+    } condition;
+
+    inline bool is_disabled() {
+        return condition.body == Condition::DISABLED;
+    }
+
+    void update() {
+        mult.speed = (condition.booster + 1) * 10 / 4;
+        mult.damage = condition.payload + 1;
+    }
+
+    // Bullet() : mult{10, 4}, condition{HIGH, HIGH, HIGH} {}
+};
+
+struct Ship {
+    Strider entity;
+
+    bool breach;
+    int pressure;
+    int inferno;
+
+    struct
+    {
+        int left_turn;
+        int right_turn;
+    } mult;
+
+    struct {
+        Condition::T cockpit;
+        Condition::T body;
+        struct
+        {
+            Condition::T left;
+            Condition::T right;
+        } thruster;
+    } condition;
+
+    void trigger_breach() {
+        breach = true;
+    }
+
+    void trigger_fire() {
+        if (pressure > 0) {
+            inferno = 100;
+        }
+    }
+
+    inline bool auto_pilot_forced() {
+        return condition.cockpit == Condition::DISABLED;
+    }
+
+    inline bool is_disabled() {
+        return condition.body == Condition::DISABLED;
+    }
+
+    void damage_roll() {
+    }
+
+    void update() {
+        mult.left_turn = (condition.thruster.right + 1) * 10 / 4;
+        mult.right_turn = (condition.thruster.left + 1) * 10 / 4;
+    }
+};
+
 struct Player {
     static const size_t MAX_BULLETS = 2;
+    Condition::T *blast_field[(MAX_BULLETS * 3)];
 
-    enum s_status {
+    enum status_e {
         P_SS_INVALID = 0,
         P_SS_OFF_DONE = 1 << 0,
         P_SS_GOOD_DONE = 1 << 1,
@@ -20,36 +108,54 @@ struct Player {
         P_SS_FAIL = 1 << 7,
     };
 
+    struct status {
+        status_e v;
+
+        void acknowledge() {
+            v = (status_e)(v >> 4);
+        }
+
+        inline const status_e get() {
+            return v;
+        }
+
+        void set(const status_e &set) {
+            if ((v << 4) != set) {
+                v = set;
+            }
+        }
+    };
+
     struct situation_t {
         struct {
-            s_status pilot;
-            s_status body;
+            status pilot;
+            status body;
             struct {
-                s_status left;
-                s_status right;
+                status left;
+                status right;
             } thruster;
         } ship;
 
         struct {
-            s_status indicator;
-            s_status head;
-            s_status body;
-            s_status boost;
+            status indicator;
+            status head;
+            status body;
+            status boost;
         } bullet[MAX_BULLETS];
 
         struct {
-            s_status gun_ready;
-            s_status left_authority;
-            s_status low_speed;
-            s_status right_authority;
-            s_status ammo_low;
-            s_status auto_pilot;
-            s_status fuel_low;
-            s_status fire;
-            s_status booster_damage;
-            s_status hull_breach;
-            s_status nuclear_meltdown;
-            s_status dead;
+            status gun_ready;
+            status left_authority;
+            status low_speed;
+            status right_authority;
+            status ammo_low;
+            status auto_pilot;
+            status fuel_low;
+            status fire;
+            status booster_damage;
+            status hull_breach;
+            status nuclear_meltdown;
+            status dead;
         } panel;
     };
 

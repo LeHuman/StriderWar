@@ -49,8 +49,8 @@ void Player::step() {
 
         spark.x0 = ship.x - (dx * spark_dist);
         spark.y0 = ship.y - (dy * spark_dist);
-        spark.x1 = spark.x0 + (dx * spark_tail);
-        spark.y1 = spark.y0 + (dy * spark_tail);
+        spark.x1 = spark.x0 + (uint16_t)(dx * spark_tail);
+        spark.y1 = spark.y0 + (uint16_t)(dy * spark_tail);
     }
 
     bool fire = false;
@@ -58,9 +58,9 @@ void Player::step() {
     if (req_bullet != last_bullet) {
         if (DOS::Math::Fix::abs(ship.vx) > bullet_vel_cmp || DOS::Math::Fix::abs(ship.vy) > bullet_vel_cmp) {
             fire = req_bullet;
-            situation.panel.low_speed = P_SS_OFF;
+            situation.panel.low_speed.set(P_SS_OFF);
         } else if (req_bullet) {
-            situation.panel.low_speed = P_SS_FAIR;
+            situation.panel.low_speed.set(P_SS_FAIR);
         }
         last_bullet = req_bullet;
     }
@@ -93,7 +93,7 @@ void Player::step() {
         }
 
         // TODO: FAIL status on permanently disabled bullet
-        situation.bullet[i].indicator = bullet.enabled ? P_SS_FAIR : P_SS_GOOD;
+        situation.bullet[i].indicator.set(bullet.enabled ? P_SS_FAIR : P_SS_GOOD);
     }
 
     for (size_t i = 0; i < MAX_BULLETS; i++) {
@@ -101,7 +101,7 @@ void Player::step() {
     }
 
     // TODO: account for permanently disabled bullets
-    situation.panel.gun_ready = (enabled_bullets >= MAX_BULLETS) ? P_SS_FAIR : P_SS_GOOD;
+    situation.panel.gun_ready.set((enabled_bullets >= MAX_BULLETS) ? P_SS_FAIR : P_SS_GOOD);
 }
 
 void Player::draw() {

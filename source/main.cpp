@@ -147,38 +147,90 @@ void temp_play_B_join() {
     nosound();
 }
 
-void temp_set_sprite(Player::s_status &status, size_t sprite_id) {
+void temp_set_sprite(Player::status &status, size_t sprite_id) {
     uint8_t color = 0;
 
-    switch (status >> 4) {
-        case Player::P_SS_OFF_DONE:
+    switch (status.get()) {
+        case Player::P_SS_OFF:
             color = 0;
-            status = Player::P_SS_OFF_DONE;
             break;
-        case Player::P_SS_GOOD_DONE:
+        case Player::P_SS_GOOD:
             color = 1;
-            status = Player::P_SS_GOOD_DONE;
             break;
-        case Player::P_SS_FAIL_DONE:
+        case Player::P_SS_FAIL:
             color = 2;
-            status = Player::P_SS_FAIL_DONE;
             break;
-        case Player::P_SS_FAIR_DONE:
+        case Player::P_SS_FAIR:
             color = 3;
-            status = Player::P_SS_FAIR_DONE;
             break;
         default:
             return;
     }
 
+    status.acknowledge();
+    debug::serial_printf("sprite %u\n", sprite_id);
+
     DOS::CGA::load_sprite(sprite_id, color, DOS::CGA::PERFECT, 0);
 }
 
-void temp_player_sprite_handle(Player &player) {
+void temp_player_sprite_handle_a(Player &player) {
+    temp_set_sprite(player.situation.ship.pilot, sprite::a_ship_pilot);
+    temp_set_sprite(player.situation.ship.body, sprite::a_ship_body);
+    temp_set_sprite(player.situation.ship.thruster.left, sprite::a_ship_thruster_left);
+    temp_set_sprite(player.situation.ship.thruster.right, sprite::a_ship_thruster_right);
+
     temp_set_sprite(player.situation.bullet[0].indicator, sprite::a_bullet_indicator_0);
+    temp_set_sprite(player.situation.bullet[0].head, sprite::a_bullet_head_0);
+    temp_set_sprite(player.situation.bullet[0].body, sprite::a_bullet_body_0);
+    temp_set_sprite(player.situation.bullet[0].boost, sprite::a_bullet_boost_0);
+
     temp_set_sprite(player.situation.bullet[1].indicator, sprite::a_bullet_indicator_1);
-    // temp_set_sprite(player.situation.panel.gun_ready, sprite::a_p_gun_ready);
-    temp_set_sprite(player.situation.panel.low_speed, sprite::a_bullet_body_1);
+    temp_set_sprite(player.situation.bullet[1].head, sprite::a_bullet_head_1);
+    temp_set_sprite(player.situation.bullet[1].body, sprite::a_bullet_body_1);
+    temp_set_sprite(player.situation.bullet[1].boost, sprite::a_bullet_boost_1);
+
+    temp_set_sprite(player.situation.panel.gun_ready, sprite::a_p_gun_ready);
+    temp_set_sprite(player.situation.panel.left_authority, sprite::a_p_authority_left);
+    temp_set_sprite(player.situation.panel.low_speed, sprite::a_p_low_speed);
+    temp_set_sprite(player.situation.panel.right_authority, sprite::a_p_authority_right);
+    temp_set_sprite(player.situation.panel.ammo_low, sprite::a_p_ammo_low);
+    temp_set_sprite(player.situation.panel.auto_pilot, sprite::a_p_auto_pilot);
+    temp_set_sprite(player.situation.panel.fuel_low, sprite::a_p_fuel_low);
+    temp_set_sprite(player.situation.panel.fire, sprite::a_p_fire);
+    temp_set_sprite(player.situation.panel.booster_damage, sprite::a_p_booster_damage);
+    temp_set_sprite(player.situation.panel.hull_breach, sprite::a_p_breach);
+    temp_set_sprite(player.situation.panel.nuclear_meltdown, sprite::a_p_nuclear_melt);
+    temp_set_sprite(player.situation.panel.dead, sprite::a_p_dead);
+}
+
+void temp_player_sprite_handle_b(Player &player) {
+    temp_set_sprite(player.situation.ship.pilot, sprite::b_ship_pilot);
+    temp_set_sprite(player.situation.ship.body, sprite::b_ship_body);
+    temp_set_sprite(player.situation.ship.thruster.left, sprite::b_ship_thruster_left);
+    temp_set_sprite(player.situation.ship.thruster.right, sprite::b_ship_thruster_right);
+
+    temp_set_sprite(player.situation.bullet[0].indicator, sprite::b_bullet_indicator_0);
+    temp_set_sprite(player.situation.bullet[0].head, sprite::b_bullet_head_0);
+    temp_set_sprite(player.situation.bullet[0].body, sprite::b_bullet_body_0);
+    temp_set_sprite(player.situation.bullet[0].boost, sprite::b_bullet_boost_0);
+
+    temp_set_sprite(player.situation.bullet[1].indicator, sprite::b_bullet_indicator_1);
+    temp_set_sprite(player.situation.bullet[1].head, sprite::b_bullet_head_1);
+    temp_set_sprite(player.situation.bullet[1].body, sprite::b_bullet_body_1);
+    temp_set_sprite(player.situation.bullet[1].boost, sprite::b_bullet_boost_1);
+
+    temp_set_sprite(player.situation.panel.gun_ready, sprite::b_p_gun_ready);
+    temp_set_sprite(player.situation.panel.left_authority, sprite::b_p_authority_left);
+    temp_set_sprite(player.situation.panel.low_speed, sprite::b_p_low_speed);
+    temp_set_sprite(player.situation.panel.right_authority, sprite::b_p_authority_right);
+    temp_set_sprite(player.situation.panel.ammo_low, sprite::b_p_ammo_low);
+    temp_set_sprite(player.situation.panel.auto_pilot, sprite::b_p_auto_pilot);
+    temp_set_sprite(player.situation.panel.fuel_low, sprite::b_p_fuel_low);
+    temp_set_sprite(player.situation.panel.fire, sprite::b_p_fire);
+    temp_set_sprite(player.situation.panel.booster_damage, sprite::b_p_booster_damage);
+    temp_set_sprite(player.situation.panel.hull_breach, sprite::b_p_breach);
+    temp_set_sprite(player.situation.panel.nuclear_meltdown, sprite::b_p_nuclear_melt);
+    temp_set_sprite(player.situation.panel.dead, sprite::b_p_dead);
 }
 
 void clear_screen() {
@@ -265,9 +317,6 @@ int main() {
         inputB.update();
         DOS::Input::Joystick::update();
 
-        // debug::serial_printf("x:%i y:%i x:%i y:%i\n", DOS::Input::Joystick::playerA.x, DOS::Input::Joystick::playerA.y, inputB.x, inputB.y);
-        // debug::serial_printf("x:%i y:%i dx:%i dy:%i\n", (int)playerA.ship.x, (int)playerA.ship.y, (int)world::X_CENTER - (int)playerA.ship.x, (int)world::Y_CENTER - (int)playerA.ship.y);
-
         if (!playerA.valid() && (DOS::Input::Joystick::playerA.fire || DOS::Input::Joystick::playerA.alt)) {
             temp_play_A_join();
             clear_screen();
@@ -285,7 +334,8 @@ int main() {
         }
 
         temp_handle_sound(playerA, playerB);
-        temp_player_sprite_handle(playerA);
+        temp_player_sprite_handle_a(playerA);
+        temp_player_sprite_handle_b(playerB);
 
         for (size_t i = 0; i < world::current_players; i++) {
             world::players[i]->draw();
