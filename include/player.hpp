@@ -199,6 +199,7 @@ struct Ship {
 };
 
 struct Player {
+    static const size_t MAX_MELTDOWN_CYCLES = 1000;
     static const size_t MAX_BULLETS = 2;
     static const size_t CONDITIONS = ((sizeof(Bullet::C) / sizeof(Condition::T)) * MAX_BULLETS) + (sizeof(Ship::C) / sizeof(Condition::T));
     Condition::T *blast_field[CONDITIONS];
@@ -279,6 +280,7 @@ struct Player {
     situation_t &situation;
     static const size_t MAX_SITUATIONS = sizeof(situation_t) / sizeof(status);
     size_t situation_cycle;
+    size_t meltdown_cycle;
 
     bool last_bullet;
     bool req_bullet;

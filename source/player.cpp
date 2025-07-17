@@ -23,7 +23,7 @@ Ship::Ship() : breach(false), pressure(MAX_PRESSURE), inferno(0), update_cycle(0
     step_damage();
 }
 
-Player::Player(DOS::Input::Interface &input, situation_t &situation_mem) : id(-1), damage_queue(0), enabled_bullets(0), input(input), last_bullet(false), req_bullet(false), bounced(0), situation(situation_mem), situation_cycle(0) {
+Player::Player(DOS::Input::Interface &input, situation_t &situation_mem) : id(-1), damage_queue(0), enabled_bullets(0), input(input), last_bullet(false), req_bullet(false), bounced(0), situation(situation_mem), situation_cycle(0), meltdown_cycle(0) {
     ship.entity.x = world::X_CENTER;
     ship.entity.y = world::Y_CENTER;
     ship.entity.enabled = true;
@@ -47,7 +47,7 @@ Player::Player(DOS::Input::Interface &input, situation_t &situation_mem) : id(-1
     blast_field[4] = &bullets[1].condition.booster;
 }
 
-static const Fixed bullet_vel_cmp = 0.5f;
+static const Fixed bullet_vel_cmp = 1.5f;
 
 void Player::damage(int hits) {
     damage_queue += hits;
@@ -55,6 +55,25 @@ void Player::damage(int hits) {
 
 void Player::step_damage() {
     ship.step_damage();
+
+    if (meltdown_cycle >= MAX_MELTDOWN_CYCLES) {
+        ship.entity.enabled = false;
+        if (enabled_bullets) {
+            for (size_t i = 0; i < MAX_BULLETS; i++) {
+                Bullet &bullet = bullets[i];
+                world::explode(bullet);
+            }
+        }
+
+        bullets[0].entity.x = ship.entity.x;
+        bullets[0].entity.y = ship.entity.y;
+        bullets[0].mult.damage = 50;
+        world::explode(bullets[0]);
+    } else if (meltdown_cycle) {
+        ++meltdown_cycle;
+    } else if (ship.condition.body == Condition::DISABLED) {
+        meltdown_cycle = 1;
+    }
 
     if (damage_queue == 0) {
         return;
@@ -133,7 +152,7 @@ void Player::step_situation() {
             situation.panel.right_authority.set(ship.condition.thruster.right);
             break;
         case 19:
-            situation.panel.nuclear_meltdown.set(P_SS_OFF);
+            situation.panel.nuclear_meltdown.set(meltdown_cycle > ((MAX_MELTDOWN_CYCLES * 2) / 3) ? P_SS_FAIL : (meltdown_cycle > (MAX_MELTDOWN_CYCLES / 3) ? P_SS_FAIR : (meltdown_cycle == 0 ? P_SS_OFF : P_SS_GOOD)));
             break;
         // TODO: Update remaining situations
         default:
@@ -143,6 +162,10 @@ void Player::step_situation() {
 }
 
 void Player::step() {
+    if (!ship.entity.enabled) {
+        return;
+    }
+
     step_damage();
 
     // IMPROVE: Actually base thrust boost on orientation?
@@ -180,14 +203,11 @@ void Player::step() {
     }
 
     bool fire = false;
+    bool at_fire_speed = ((ship.entity.vx * ship.entity.vx) + (ship.entity.vy * ship.entity.vy)) > bullet_vel_cmp;
+    situation.panel.low_speed.set(at_fire_speed ? P_SS_OFF : P_SS_FAIR);
 
-    if (req_bullet != last_bullet) {
-        if (DOS::Math::Fix::abs(ship.entity.vx) > bullet_vel_cmp || DOS::Math::Fix::abs(ship.entity.vy) > bullet_vel_cmp) {
-            fire = req_bullet;
-            situation.panel.low_speed.set(P_SS_OFF);
-        } else if (req_bullet) {
-            situation.panel.low_speed.set(P_SS_FAIR);
-        }
+    if (at_fire_speed && (req_bullet != last_bullet)) {
+        fire = req_bullet;
         last_bullet = req_bullet;
     }
 

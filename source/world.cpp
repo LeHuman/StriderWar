@@ -27,14 +27,14 @@ int add_player(Player &player) {
 }
 
 void explode(Bullet &bullet) {
-    static const int blast_radius = 5 + bullet.mult.damage;
+    const int blast_radius = 8 + bullet.mult.damage;
     const Fixed &x = bullet.entity.x;
     const Fixed &y = bullet.entity.y;
 
-    DOS::Draw::pixel(x - 1, y - 1, 3);
-    DOS::Draw::pixel(x - 1, y + 1, 3);
-    DOS::Draw::pixel(x + 1, y - 1, 3);
-    DOS::Draw::pixel(x + 1, y + 1, 3);
+    DOS::Draw::pixel(x - bullet.mult.damage, y - bullet.mult.damage, 3);
+    DOS::Draw::pixel(x - bullet.mult.damage, y + bullet.mult.damage, 3);
+    DOS::Draw::pixel(x + bullet.mult.damage, y - bullet.mult.damage, 3);
+    DOS::Draw::pixel(x + bullet.mult.damage, y + bullet.mult.damage, 3);
 
     for (size_t i = 0; i < current_players; i++) {
         const Fixed &sx = players[i]->ship.entity.x;
@@ -45,9 +45,9 @@ void explode(Bullet &bullet) {
 
         if (((dx * dx) + (dy * dy)) < (blast_radius * blast_radius / 2)) {
             DOS::Draw::line(x, y, sx, sy, 2);
-            players[i]->ship.entity.pulse(rand() - (RAND_MAX / 2), rand() - (RAND_MAX / 2));
+            players[i]->ship.entity.pulse(DOS::rand::get(-blast_radius, blast_radius), DOS::rand::get(-blast_radius, blast_radius));
             players[i]->damage(DOS::rand::get(1, bullet.mult.damage + 1));
-            debug::serial_print("hit\n");
+            debug::serial_printf("hit %i\n", bullet.mult.damage);
         }
     }
 }
