@@ -6,6 +6,7 @@
 namespace random {
 
 typedef int16_t rand_t;
+typedef uint16_t urand_t;
 
 const size_t RANDOM_LUT_SIZE = 127;
 

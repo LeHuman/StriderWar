@@ -14,7 +14,7 @@ rand_t get() {
 rand_t get(int high) {
     rand_t val = get();
     // Map signed to unsigned
-    rand_t uval = val ^ 0x8000;
+    urand_t uval = val ^ 0x8000;
     return uval % (high + 1);
 }
 
