@@ -55,7 +55,18 @@
         "system_error": "cpp",
         "type_traits": "cpp",
         "xtr1common": "cpp",
-        "list": "cpp"
+        "list": "cpp",
+        "tuple": "cpp",
+        "algorithm": "cpp",
+        "functional": "cpp",
+        "optional": "cpp",
+        "atomic": "cpp",
+        "charconv": "cpp",
+        "exception": "cpp",
+        "streambuf": "cpp",
+        "unordered_map": "cpp",
+        "xhash": "cpp",
+        "xlocinfo": "cpp"
     },
     "sonarlint.pathToCompileCommands": "${workspaceFolder}\\build\\compile_commands.json"
 }
