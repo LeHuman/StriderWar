@@ -39,3 +39,9 @@ add_executable(${PROJECT_NAME} ${SOURCES})
 target_link_libraries(${PROJECT_NAME} DOSTime DOSGraphics DOSInput math rand DOSSound)
 
 include_directories(include)
+
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E echo "Checking binary size..."
+    COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/scripts/check_size.bat \"$<TARGET_FILE:${PROJECT_NAME}>\"
+    COMMENT "Verifying ${TARGET_NAME} binary size is under 87 KB"
+)
