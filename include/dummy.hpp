@@ -1,4 +1,5 @@
 #include <dos/input.hpp>
+#include <math.hpp>
 
 #include "debug.hpp"
 #include "player.hpp"

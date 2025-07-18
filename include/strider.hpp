@@ -1,7 +1,7 @@
 #pragma once
 
 #include <dos/graphics.hpp>
-#include <dos/math.hpp>
+#include <math.hpp>
 #include <stdlib.h>
 
 class Strider {

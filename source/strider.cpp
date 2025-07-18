@@ -2,6 +2,8 @@
 
 #include "world.hpp"
 
+using namespace math;
+
 Strider::Strider() : trail_count(2), last_count(0), count(1), draw_counter(0), draw_counter_limit(4), draw_counter_max(7), x(0), y(0), vx(0), vy(0), color(1), enabled(false), has_physics(false) {}
 Strider::Strider(int x, int y) : trail_count(2), last_count(0), count(1), draw_counter(0), draw_counter_limit(4), draw_counter_max(7), x(x), y(y), vx(0), vy(0), color(1), enabled(false), has_physics(false) {}
 Strider::Strider(int x, int y, int vx, int vy) : trail_count(2), last_count(0), count(1), draw_counter(0), draw_counter_limit(4), draw_counter_max(7), x(x), y(y), vx(vx), vy(vy), color(1), enabled(false), has_physics(false) {}
@@ -81,7 +83,7 @@ void Strider::step() {
     }
 
     if (has_physics && (bounce.y || bounce.x)) {
-        bounce.angle = DOS::Math::Fix::atan2(vy, vx);
+        bounce.angle = fixed::atan2(vy, vx);
         if (bounce.x) {
             vx *= world::bounce_mult;
         }
@@ -90,7 +92,7 @@ void Strider::step() {
         }
     }
 
-    draw_counter_limit = (((draw_counter_max - DOS::Math::Fix::sqrt(vx * vx + vy * vy).toInt() * (draw_counter_max / 4)) & draw_counter_max) / 2) | 1;
+    draw_counter_limit = (((draw_counter_max - fixed::sqrt(vx * vx + vy * vy).toInt() * (draw_counter_max / 4)) & draw_counter_max) / 2) | 1;
 }
 
 void Strider::draw(bool force) {

@@ -1,10 +1,12 @@
 #include "player.hpp"
 
 #include <dos/graphics.hpp>
-#include <dos/math.hpp>
+#include <math.hpp>
 #include <rand.hpp>
 
 #include "world.hpp"
+
+using namespace math;
 
 Bullet::Bullet() : loaded(true), delay(MAX_DELAY) {
     condition.payload = Condition::HIGH;
@@ -187,19 +189,19 @@ void Player::step() {
         static const Fixed spark_tail = -0.5f;
         static const Fixed spark_deflect_rad = 30.0f;
 
-        if (ship.entity.bounce.angle < DOS::Math::Fix::PI) {
+        if (ship.entity.bounce.angle < fixed::PI) {
             ship.entity.bounce.angle -= spark_deflect_rad;
         } else {
             ship.entity.bounce.angle += spark_deflect_rad;
         }
 
-        Fixed dx = DOS::Math::Fix::cos(ship.entity.bounce.angle);
-        Fixed dy = DOS::Math::Fix::sin(ship.entity.bounce.angle);
+        Fixed dx = fixed::cos(ship.entity.bounce.angle);
+        Fixed dy = fixed::sin(ship.entity.bounce.angle);
 
         spark.x0 = ship.entity.x - (dx * spark_dist);
         spark.y0 = ship.entity.y - (dy * spark_dist);
-        spark.x1 = spark.x0 + (uint16_t)(dx * spark_tail);
-        spark.y1 = spark.y0 + (uint16_t)(dy * spark_tail);
+        spark.x1 = spark.x0 + (dx * spark_tail);
+        spark.y1 = spark.y0 + (dy * spark_tail);
     }
 
     bool fire = false;

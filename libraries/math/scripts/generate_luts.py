@@ -2,8 +2,8 @@ import math
 import os
 import re
 
-HEADER_FILES = ["include/dos/math/fixed/fixed_math.hpp", "include/dos/math/fixed/fixed.hpp"]
-OUTPUT_FILE = "include/dos/math/luts.hpp"
+HEADER_FILES = ["include/math/fixed/fixed_math.hpp", "include/math/fixed/fixed.hpp"]
+OUTPUT_FILE = "include/math/math_lut.hpp"
 
 os.chdir(os.path.join(os.path.dirname(__file__), '..'))
 
@@ -77,10 +77,12 @@ def main():
     with open(OUTPUT_FILE, "w") as f:
         f.write("#pragma once\n\n")
         f.write("// Auto-generated lookup tables based on fixed_math.hpp\n\n")
+        f.write("namespace math {\n\n")
         f.write(gen_sin_table(SIN_SIZE, FIXED_SCALE))
         f.write(gen_atan2_table(ATAN_SIZE, ATAN_SIZE))
         f.write(gen_sqrt_table(SQRT_SIZE, FIXED_SCALE))
         f.write(gen_log_table(LOG_SIZE, FIXED_SCALE))
+        f.write("} // namespace math\n")
         print(f"{OUTPUT_FILE} generated.")
 
 if __name__ == "__main__":

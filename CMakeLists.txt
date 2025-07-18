@@ -36,6 +36,6 @@ add_subdirectory(libraries)
 
 # Add the executable target
 add_executable(${PROJECT_NAME} ${SOURCES})
-target_link_libraries(${PROJECT_NAME} DOSTime DOSGraphics DOSInput DOSMath rand DOSSound)
+target_link_libraries(${PROJECT_NAME} DOSTime DOSGraphics DOSInput math rand DOSSound)
 
 include_directories(include)

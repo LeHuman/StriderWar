@@ -3,11 +3,13 @@
 #include <utility>
 
 #include <dos/graphics.hpp>
-#include <dos/math.hpp>
+#include <math.hpp>
 #include <rand.hpp>
 #include <stdlib.h>
 
 #include "debug.hpp"
+
+using namespace math;
 
 namespace world {
 

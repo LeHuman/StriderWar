@@ -2,6 +2,8 @@
 
 // Auto-generated lookup tables based on fixed_math.hpp
 
+namespace math {
+
 static const int16_t sinTable[127] = {
     0,
     1,
@@ -518,3 +520,4 @@ static const int16_t logLUT[127] = {
     33,
     33,
 };
+} // namespace math
