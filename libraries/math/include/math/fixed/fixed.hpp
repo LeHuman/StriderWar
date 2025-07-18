@@ -65,11 +65,23 @@ struct Fixed {
     bool operator<=(Fixed rhs) const { return value <= rhs.value; }
     bool operator>=(Fixed rhs) const { return value >= rhs.value; }
 
-    bool operator==(uint16_t i16) const { return value == INT2FIXED(i16); }
-    bool operator<(uint16_t i16) const { return value < INT2FIXED(i16); }
-    bool operator>(uint16_t i16) const { return value > INT2FIXED(i16); }
-    bool operator<=(uint16_t i16) const { return value <= INT2FIXED(i16); }
-    bool operator>=(uint16_t i16) const { return value >= INT2FIXED(i16); }
+    bool operator==(float f) const { return value == FLOAT2FIXED(f); }
+    bool operator<(float f) const { return value < FLOAT2FIXED(f); }
+    bool operator>(float f) const { return value > FLOAT2FIXED(f); }
+    bool operator<=(float f) const { return value <= FLOAT2FIXED(f); }
+    bool operator>=(float f) const { return value >= FLOAT2FIXED(f); }
+
+    bool operator==(unsigned int i) const { return value == INT2FIXED((int)i); }
+    bool operator<(unsigned int i) const { return value < INT2FIXED((int)i); }
+    bool operator>(unsigned int i) const { return value > INT2FIXED((int)i); }
+    bool operator<=(unsigned int i) const { return value <= INT2FIXED((int)i); }
+    bool operator>=(unsigned int i) const { return value >= INT2FIXED((int)i); }
+
+    bool operator==(int i) const { return value == INT2FIXED(i); }
+    bool operator<(int i) const { return value < INT2FIXED(i); }
+    bool operator>(int i) const { return value > INT2FIXED(i); }
+    bool operator<=(int i) const { return value <= INT2FIXED(i); }
+    bool operator>=(int i) const { return value >= INT2FIXED(i); }
 
     operator float() const {
         return value / static_cast<float>(FIXED_SCALE);
