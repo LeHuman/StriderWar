@@ -1,7 +1,7 @@
 #pragma once
 
 #include <dos/input.hpp>
-#include <dos/rand.hpp>
+#include <rand.hpp>
 #include <stdlib.h>
 
 #include "debug.hpp"
@@ -130,7 +130,7 @@ struct Ship {
     }
 
     void damage_roll() {
-        switch (DOS::rand::get(16)) {
+        switch (random::get(16)) {
             case 0:
             case 1:
             case 15:
@@ -171,7 +171,7 @@ struct Ship {
         if (lost_cycles) {
             entity.pulse(entity.vy / -2, entity.vx / -2);
             --lost_cycles;
-        } else if (lost_cond != 9 && (DOS::rand::get(2 + lost_cond) == 0)) {
+        } else if (lost_cond != 9 && (random::get(2 + lost_cond) == 0)) {
             debug::serial_print("lost");
             lost_cycles = MAX_LOST_CYCLES;
         }
@@ -179,7 +179,7 @@ struct Ship {
         if (breach) {
             pressure--;
             // Three 1/5 rolls to cause damage
-            if ((pressure % (MAX_INFERNO / 4) == 0) && (DOS::rand::get(4) == 0)) {
+            if ((pressure % (MAX_INFERNO / 4) == 0) && (random::get(4) == 0)) {
                 damage_roll();
             }
             breach = pressure > 0;

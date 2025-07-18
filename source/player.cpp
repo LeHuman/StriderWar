@@ -2,7 +2,7 @@
 
 #include <dos/graphics.hpp>
 #include <dos/math.hpp>
-#include <dos/rand.hpp>
+#include <rand.hpp>
 
 #include "world.hpp"
 
@@ -79,7 +79,7 @@ void Player::step_damage() {
         return;
     }
 
-    int i = DOS::rand::get(CONDITIONS * 2);
+    int i = random::get(CONDITIONS * 2);
     if (i < CONDITIONS) {
         Condition::damage(blast_field[i]);
     }

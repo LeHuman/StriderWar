@@ -4,7 +4,7 @@
 
 #include <dos/graphics.hpp>
 #include <dos/math.hpp>
-#include <dos/rand.hpp>
+#include <rand.hpp>
 #include <stdlib.h>
 
 #include "debug.hpp"
@@ -45,8 +45,8 @@ void explode(Bullet &bullet) {
 
         if (((dx * dx) + (dy * dy)) < (blast_radius * blast_radius / 2)) {
             DOS::Draw::line(x, y, sx, sy, 2);
-            players[i]->ship.entity.pulse(DOS::rand::get(-blast_radius, blast_radius), DOS::rand::get(-blast_radius, blast_radius));
-            players[i]->damage(DOS::rand::get(1, bullet.mult.damage + 1));
+            players[i]->ship.entity.pulse(random::get(-blast_radius, blast_radius), random::get(-blast_radius, blast_radius));
+            players[i]->damage(random::get(1, bullet.mult.damage + 1));
             debug::serial_printf("hit %i\n", bullet.mult.damage);
         }
     }
