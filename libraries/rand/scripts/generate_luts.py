@@ -3,14 +3,15 @@ import os
 from random import Random
 import re
 
-HEADER_FILES = ["include/dos/rand/rand.hpp"]
-OUTPUT_FILE = "include/dos/rand/rand_lut.hpp"
+HEADER_FILES = ["include/rand/rand.hpp"]
+OUTPUT_FILE = "include/rand/rand_lut.hpp"
 
 INT_MIN = -32768
 INT_MAX = 32767
 
 os.chdir(os.path.join(os.path.dirname(__file__), '..'))
 
+# TODO: Also parse datatype
 # Read const size_t from header file
 def parse_consts(filenames):
     consts = {}
@@ -28,7 +29,7 @@ def parse_consts(filenames):
 
 
 def get_rand_table(size):
-    out = [f"static const int16_t random_ints[{size}] = {{"]
+    out = [f"static const rand_t random_ints[{size}] = {{"]
     rnd = Random(13378085)
     for _ in range(size):
         val = rnd.randint(INT_MIN, INT_MAX)
@@ -45,7 +46,9 @@ def main():
     with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
         f.write("#pragma once\n\n#include <stdint.h>\n\n")
         f.write("// Auto-generated lookup tables based on rand.hpp\n\n")
+        f.write("namespace random {\n\n")
         f.write(get_rand_table(RANDOM_LUT_SIZE))
+        f.write("\n} // namespace rand\n")
         print(f"{OUTPUT_FILE} generated.")
 
 

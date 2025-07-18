@@ -4,7 +4,9 @@
 
 // Auto-generated lookup tables based on rand.hpp
 
-static const int16_t random_ints[127] = {
+namespace random {
+
+static const rand_t random_ints[127] = {
     17059,
     -25039,
     16290,
@@ -133,3 +135,5 @@ static const int16_t random_ints[127] = {
     -9601,
     -5453,
 };
+
+} // namespace rand
