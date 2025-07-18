@@ -15,10 +15,10 @@ private:
     uint8_t draw_counter_max;
 
 public:
-    Fixed x;
-    Fixed y;
-    Fixed vx;
-    Fixed vy;
+    math::Fixed x;
+    math::Fixed y;
+    math::Fixed vx;
+    math::Fixed vy;
 
     uint8_t color;
     bool enabled;
@@ -27,7 +27,7 @@ public:
     struct bounce_t {
         bool x;
         bool y;
-        Fixed angle;
+        math::Fixed angle;
 
         bounce_t() : x(false), y(false) {}
     } bounce;
@@ -38,7 +38,7 @@ public:
 
     void set_priority(uint8_t priority);
 
-    void pulse(Fixed vx, Fixed vy);
+    void pulse(math::Fixed vx, math::Fixed vy);
 
     void step();
 

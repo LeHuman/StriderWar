@@ -8,6 +8,8 @@
 #define FLOAT2FIXED(f) ((int16_t)(f * FIXED_SCALE))
 #define INT2FIXED(i) ((int16_t)(i << FIXED_SHIFT))
 
+namespace math {
+
 struct Fixed {
     int16_t value;
 
@@ -85,3 +87,5 @@ struct Fixed {
         return static_cast<int>(value >> FIXED_SHIFT);
     }
 };
+
+} // namespace math
