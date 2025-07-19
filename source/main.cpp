@@ -168,7 +168,6 @@ void temp_set_sprite(Player::status &status, size_t sprite_id) {
     }
 
     status.acknowledge();
-    // debug::serial_printf("sprite %u\n", sprite_id);
 
     DOS::CGA::load_sprite(sprite_id, color, DOS::CGA::PERFECT, 0);
 }

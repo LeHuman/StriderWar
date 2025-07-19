@@ -8,23 +8,6 @@
 
 using namespace math;
 
-Bullet::Bullet() : loaded(true), delay(MAX_DELAY) {
-    condition.payload = Condition::HIGH;
-    condition.body = Condition::HIGH;
-    condition.booster = Condition::HIGH;
-
-    step_damage();
-}
-
-Ship::Ship() : breach(false), pressure(MAX_PRESSURE), inferno(0), update_cycle(0) {
-    condition.cockpit = Condition::HIGH;
-    condition.body = Condition::HIGH;
-    condition.thruster.left = Condition::HIGH;
-    condition.thruster.right = Condition::HIGH;
-
-    step_damage();
-}
-
 Player::Player(DOS::Input::Interface &input, situation_t &situation_mem) : id(-1), damage_queue(0), enabled_bullets(0), input(input), last_bullet(false), req_bullet(false), bounced(0), situation(situation_mem), situation_cycle(0), meltdown_cycle(0) {
     ship.entity.x = world::X_CENTER;
     ship.entity.y = world::Y_CENTER;
@@ -50,6 +33,20 @@ Player::Player(DOS::Input::Interface &input, situation_t &situation_mem) : id(-1
 }
 
 static const Fixed bullet_vel_cmp = 1.5f;
+
+void Player::status::acknowledge() {
+    v = (status_e)(v >> 4);
+}
+
+void Player::status::set(const status_e &set) {
+    if ((v << 4) != set) {
+        v = set;
+    }
+}
+
+void Player::status::set(const Condition::T &set) {
+    return this->set((status_e)(1 << (set + 4)));
+}
 
 void Player::damage(int hits) {
     damage_queue += hits;

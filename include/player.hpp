@@ -4,199 +4,11 @@
 #include <rand.hpp>
 #include <stdlib.h>
 
+#include "condition.hpp"
 #include "debug.hpp"
 #include "strider.hpp"
-
-namespace Condition {
-enum T {
-    DISABLED,
-    LOW,
-    MID,
-    HIGH,
-};
-
-// FIXME: don't allow 'looping' back to high
-Condition::T disable_high(T condition) {
-    if (condition == DISABLED) {
-        return HIGH;
-    } else if (condition == HIGH) {
-        return DISABLED;
-    }
-    return condition;
-}
-
-void damage(T &condition) {
-    condition = condition > 0 ? (T)(condition - 1) : Condition::DISABLED;
-}
-void damage(T *condition) {
-    *condition = *condition > 0 ? (T)(*condition - 1) : Condition::DISABLED;
-}
-} // namespace Condition
-
-struct Bullet {
-    Strider entity;
-
-    static const size_t MAX_DELAY = 100;
-
-    bool loaded;
-    size_t delay;
-
-    struct
-    {
-        int speed;
-        int damage;
-    } mult;
-
-    struct C {
-        Condition::T payload;
-        Condition::T body;
-        Condition::T booster;
-    } condition;
-
-    inline bool is_disabled() {
-        return condition.body == Condition::DISABLED;
-    }
-
-    inline void fired() {
-        loaded = false;
-    }
-
-    void step_loading(size_t added_delay = 0) {
-        if (!loaded && (--delay == 0)) {
-            loaded = true;
-            delay = MAX_DELAY + added_delay;
-        }
-    }
-
-    void step_damage() {
-        mult.speed = (condition.booster + 1) * 10 / 4;
-        mult.damage = condition.payload + 1;
-    }
-
-    Bullet();
-};
-
-struct Ship {
-    Strider entity;
-
-    static const size_t MAX_UPDATE_CYCLE = 10;
-    static const size_t MAX_LOST_CYCLES = 10;
-    static const int MAX_PRESSURE = 100;
-    static const int MAX_INFERNO = 100;
-    static const int MAX_THRUST_BOOST = 100;
-
-    bool breach;
-    int pressure;
-    int inferno;
-    size_t lost_cycles;
-    size_t update_cycle;
-
-    struct
-    {
-        int left_turn;
-        int right_turn;
-    } mult;
-
-    struct C {
-        Condition::T cockpit;
-        Condition::T body;
-        struct
-        {
-            Condition::T left;
-            Condition::T right;
-        } thruster;
-    } condition;
-
-    void trigger_breach() {
-        if (pressure > 0) {
-            breach = true;
-        }
-    }
-
-    void trigger_fire() {
-        if (pressure > 0) {
-            inferno += 1;
-        } else {
-            inferno = 0;
-        }
-    }
-
-    inline bool auto_pilot_forced() {
-        return condition.cockpit == Condition::DISABLED;
-    }
-
-    inline bool is_disabled() {
-        return condition.body == Condition::DISABLED;
-    }
-
-    void damage_roll() {
-        switch (random::get(16)) {
-            case 0:
-            case 1:
-            case 15:
-                debug::serial_print("fire\n");
-                trigger_fire();
-                break;
-            case 3:
-                debug::serial_print("breach\n");
-                trigger_breach();
-                break;
-            case 5:
-                Condition::damage(condition.thruster.left);
-                break;
-            case 6:
-                Condition::damage(condition.thruster.right);
-                break;
-            case 8:
-                Condition::damage(condition.cockpit);
-                break;
-            case 11:
-                Condition::damage(condition.body);
-                break;
-            default:
-                // no event
-                break;
-        }
-    }
-
-    void step_damage() {
-        if (update_cycle++ % MAX_UPDATE_CYCLE != 0) {
-            return;
-        }
-
-        mult.left_turn = ((condition.thruster.right + 1) * MAX_THRUST_BOOST) / 4;
-        mult.right_turn = ((condition.thruster.left + 1) * MAX_THRUST_BOOST) / 4;
-
-        const int lost_cond = condition.thruster.left + condition.thruster.right + condition.cockpit;
-        if (lost_cycles) {
-            entity.pulse(entity.vy / -2, entity.vx / -2);
-            --lost_cycles;
-        } else if (lost_cond != 9 && (random::get(2 + lost_cond) == 0)) {
-            debug::serial_print("lost");
-            lost_cycles = MAX_LOST_CYCLES;
-        }
-
-        if (breach) {
-            pressure--;
-            // Three 1/5 rolls to cause damage
-            if ((pressure % (MAX_INFERNO / 4) == 0) && (random::get(4) == 0)) {
-                damage_roll();
-            }
-            breach = pressure > 0;
-        }
-
-        if (inferno) {
-            trigger_fire();
-        }
-
-        if (inferno >= MAX_INFERNO) {
-            damage_roll();
-            inferno = 0;
-        }
-    }
-
-    Ship();
-};
+#include "bullet.hpp"
+#include "ship.hpp"
 
 struct Player {
     static const size_t MAX_MELTDOWN_CYCLES = 1000;
@@ -219,23 +31,14 @@ struct Player {
     struct status {
         status_e v;
 
-        void acknowledge() {
-            v = (status_e)(v >> 4);
-        }
+        void acknowledge();
 
         inline const status_e get() {
             return v;
         }
 
-        void set(const status_e &set) {
-            if ((v << 4) != set) {
-                v = set;
-            }
-        }
-
-        void set(const Condition::T &set) {
-            return this->set((status_e)(1 << (set + 4)));
-        }
+        void set(const status_e &set);
+        void set(const Condition::T &set);
     };
 
     struct situation_t {

@@ -27,16 +27,15 @@ void serial_print(const char *str);
 void serial_printf(const char *fmt, ...);
 #else
 
-inline static void joystick_draw_A() {}
+using namespace DOS::Input::Joystick;
 
-inline static void loop_time_start() {}
-inline static void loop_time_stop() {}
-
-inline static void sprite_trigger_rand() {}
-
-inline static void serial_init() {}
-inline static void serial_print(const char *str) {}
-inline static void serial_printf(const char *fmt, ...) {}
+#define joystick_draw_A() LUT_SIZE
+#define loop_time_start() LUT_SIZE
+#define loop_time_stop() LUT_SIZE
+#define sprite_trigger_rand() LUT_SIZE
+#define serial_init() LUT_SIZE
+#define serial_print(x) LUT_SIZE
+#define serial_printf(...) LUT_SIZE
 
 #endif
 

@@ -66,7 +66,8 @@
         "streambuf": "cpp",
         "unordered_map": "cpp",
         "xhash": "cpp",
-        "xlocinfo": "cpp"
+        "xlocinfo": "cpp",
+        "string": "cpp"
     },
     "sonarlint.pathToCompileCommands": "${workspaceFolder}\\build\\compile_commands.json"
 }
