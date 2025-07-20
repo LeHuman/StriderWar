@@ -34,8 +34,23 @@ struct Bullet {
         loaded = false;
     }
 
-    void step_loading(size_t added_delay = 0);
-    void step_damage();
+    void step_loading(size_t added_delay = 0) {
+        if (!loaded && (--delay == 0)) {
+            loaded = true;
+            delay = MAX_DELAY + added_delay;
+        }
+    }
 
-    Bullet();
+    void step_damage() {
+        mult.speed = (condition.booster + 1) * 10 / 4;
+        mult.damage = condition.payload + 1;
+    }
+
+    Bullet() : loaded(true), delay(MAX_DELAY) {
+        condition.payload = Condition::HIGH;
+        condition.body = Condition::HIGH;
+        condition.booster = Condition::HIGH;
+
+        step_damage();
+    }
 };

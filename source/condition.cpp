@@ -12,10 +12,6 @@ T disable_high(T condition) {
     return condition;
 }
 
-void damage(T &condition) {
-    condition = condition > 0 ? (T)(condition - 1) : Condition::DISABLED;
-}
-
 void damage(T *condition) {
     *condition = *condition > 0 ? (T)(*condition - 1) : Condition::DISABLED;
 }

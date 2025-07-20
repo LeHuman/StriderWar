@@ -4,16 +4,17 @@
 #include <rand.hpp>
 #include <stdlib.h>
 
+#include "bullet.hpp"
 #include "condition.hpp"
 #include "debug.hpp"
-#include "strider.hpp"
-#include "bullet.hpp"
 #include "ship.hpp"
+#include "strider.hpp"
 
 struct Player {
     static const size_t MAX_MELTDOWN_CYCLES = 1000;
     static const size_t MAX_BULLETS = 2;
     static const size_t CONDITIONS = ((sizeof(Bullet::C) / sizeof(Condition::T)) * MAX_BULLETS) + (sizeof(Ship::C) / sizeof(Condition::T));
+
     Condition::T *blast_field[CONDITIONS];
 
     enum status_e {
@@ -31,14 +32,23 @@ struct Player {
     struct status {
         status_e v;
 
-        void acknowledge();
+        void acknowledge() {
+            v = (status_e)(v >> 4);
+        }
 
         inline const status_e get() {
             return v;
         }
 
-        void set(const status_e &set);
-        void set(const Condition::T &set);
+        void set(const status_e &set) {
+            if ((v << 4) != set) {
+                v = set;
+            }
+        }
+
+        void set(const Condition::T &set) {
+            return this->set((status_e)(1 << (set + 4)));
+        }
     };
 
     struct situation_t {
@@ -101,11 +111,94 @@ struct Player {
 
     void step_damage();
 
-    void step_situation();
+    void step_situation() {
+        switch (situation_cycle++ % 20) { // MAX_SITUATIONS?
+            case 0:
+                situation.ship.pilot.set(ship.condition.cockpit);
+                break;
+            case 1:
+                situation.ship.body.set(ship.condition.body);
+                break;
+            case 2:
+                situation.ship.thruster.left.set(ship.condition.thruster.left);
+                break;
+            case 3:
+                situation.ship.thruster.right.set(ship.condition.thruster.right);
+                break;
+            case 4:
+                situation.bullet[0].head.set(bullets[0].condition.payload);
+                break;
+            case 5:
+                situation.bullet[0].body.set(bullets[0].condition.body);
+                break;
+            case 6:
+                situation.bullet[0].boost.set(bullets[0].condition.booster);
+                break;
+            case 7:
+                situation.bullet[1].head.set(bullets[1].condition.payload);
+                break;
+            case 8:
+                situation.bullet[1].body.set(bullets[1].condition.body);
+                break;
+            case 9:
+                situation.bullet[1].boost.set(bullets[1].condition.booster);
+                break;
+            case 10:
+                situation.panel.ammo_low.set(Condition::disable_high((Condition::T)((bullets[0].condition.payload + bullets[1].condition.payload + 1) / 2)));
+                break;
+            case 11:
+                situation.panel.auto_pilot.set(ship.auto_pilot_forced() ? P_SS_FAIL : P_SS_OFF);
+                break;
+            case 12:
+                situation.panel.booster_damage.set(Condition::disable_high((Condition::T)((bullets[0].condition.booster + bullets[1].condition.booster + 1) / 2)));
+                break;
+            case 13:
+                situation.panel.dead.set(ship.is_disabled() ? P_SS_FAIL : P_SS_OFF);
+                break;
+            case 14:
+                situation.panel.fire.set(ship.inferno ? (ship.inferno > (ship.MAX_INFERNO / 2) ? P_SS_FAIL : P_SS_FAIR) : P_SS_OFF);
+                break;
+            case 15:
+                situation.panel.fuel_low.set(Condition::disable_high((Condition::T)((bullets[0].condition.body + bullets[1].condition.body + 1) / 2)));
+                break;
+            case 16:
+                situation.panel.hull_breach.set(ship.pressure < (ship.MAX_PRESSURE / 3) ? P_SS_FAIL : (ship.pressure < ((ship.MAX_PRESSURE * 2) / 3) ? P_SS_FAIR : (ship.pressure == ship.MAX_PRESSURE ? P_SS_OFF : P_SS_GOOD)));
+                break;
+            case 17:
+                situation.panel.left_authority.set(ship.condition.thruster.left);
+                break;
+            case 18:
+                situation.panel.right_authority.set(ship.condition.thruster.right);
+                break;
+            case 19:
+                situation.panel.nuclear_meltdown.set(meltdown_cycle > ((MAX_MELTDOWN_CYCLES * 2) / 3) ? P_SS_FAIL : (meltdown_cycle > (MAX_MELTDOWN_CYCLES / 3) ? P_SS_FAIR : (meltdown_cycle == 0 ? P_SS_OFF : P_SS_GOOD)));
+                break;
+            // TODO: Update remaining situations
+            default:
+                // Not updated here
+                break;
+        }
+    }
 
     void step();
 
-    void draw();
+    void draw() {
+        if (bounced) {
+            DOS::Draw::line(spark, bounced - 1);
+            if (bounced == 4) {
+                bounced = 1;
+            } else {
+                bounced = 0;
+            }
+        }
 
-    void damage(int hits);
+        ship.entity.draw();
+        for (size_t i = 0; i < sizeof(bullets) / sizeof(bullets[0]); i++) {
+            bullets[i].entity.draw();
+        }
+    }
+
+    void damage(int hits) {
+        damage_queue += hits;
+    }
 };

@@ -37,9 +37,19 @@ struct Ship {
         } thruster;
     } condition;
 
-    void trigger_breach();
+    void trigger_breach() {
+        if (pressure > 0) {
+            breach = true;
+        }
+    }
 
-    void trigger_fire();
+    void trigger_fire() {
+        if (pressure > 0) {
+            inferno += 1;
+        } else {
+            inferno = 0;
+        }
+    }
 
     inline bool auto_pilot_forced() {
         return condition.cockpit == Condition::DISABLED;
@@ -53,5 +63,12 @@ struct Ship {
 
     void step_damage();
 
-    Ship();
+    Ship() : breach(false), pressure(MAX_PRESSURE), inferno(0), update_cycle(0) {
+        condition.cockpit = Condition::HIGH;
+        condition.body = Condition::HIGH;
+        condition.thruster.left = Condition::HIGH;
+        condition.thruster.right = Condition::HIGH;
+
+        step_damage();
+    }
 };

@@ -4,10 +4,6 @@
 
 using namespace math;
 
-Strider::Strider() : trail_count(2), last_count(0), count(1), draw_counter(0), draw_counter_limit(4), draw_counter_max(7), x(0), y(0), vx(0), vy(0), color(1), enabled(false), has_physics(false) {}
-Strider::Strider(int x, int y) : trail_count(2), last_count(0), count(1), draw_counter(0), draw_counter_limit(4), draw_counter_max(7), x(x), y(y), vx(0), vy(0), color(1), enabled(false), has_physics(false) {}
-Strider::Strider(int x, int y, int vx, int vy) : trail_count(2), last_count(0), count(1), draw_counter(0), draw_counter_limit(4), draw_counter_max(7), x(x), y(y), vx(vx), vy(vy), color(1), enabled(false), has_physics(false) {}
-
 void Strider::set_priority(uint8_t priority) {
     static const uint8_t priority_map[9] = {
         7,
@@ -34,11 +30,6 @@ void Strider::set_priority(uint8_t priority) {
     }
 
     draw_counter_max = priority_map[priority];
-}
-
-void Strider::pulse(Fixed vx, Fixed vy) {
-    this->vx += vx;
-    this->vy += vy;
 }
 
 void Strider::step() {

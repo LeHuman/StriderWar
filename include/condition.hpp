@@ -12,6 +12,5 @@ enum T {
 
 T disable_high(T condition);
 
-void damage(T &condition);
 void damage(T *condition);
 } // namespace Condition

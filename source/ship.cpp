@@ -2,28 +2,19 @@
 
 #include <rand.hpp>
 
-Ship::Ship() : breach(false), pressure(MAX_PRESSURE), inferno(0), update_cycle(0) {
-    condition.cockpit = Condition::HIGH;
-    condition.body = Condition::HIGH;
-    condition.thruster.left = Condition::HIGH;
-    condition.thruster.right = Condition::HIGH;
+// void Ship::trigger_breach() {
+//     if (pressure > 0) {
+//         breach = true;
+//     }
+// }
 
-    step_damage();
-}
-
-void Ship::trigger_breach() {
-    if (pressure > 0) {
-        breach = true;
-    }
-}
-
-void Ship::trigger_fire() {
-    if (pressure > 0) {
-        inferno += 1;
-    } else {
-        inferno = 0;
-    }
-}
+// void Ship::trigger_fire() {
+//     if (pressure > 0) {
+//         inferno += 1;
+//     } else {
+//         inferno = 0;
+//     }
+// }
 
 void Ship::damage_roll() {
     switch (random::get(16)) {
@@ -38,16 +29,16 @@ void Ship::damage_roll() {
             trigger_breach();
             break;
         case 5:
-            Condition::damage(condition.thruster.left);
+            Condition::damage(&condition.thruster.left);
             break;
         case 6:
-            Condition::damage(condition.thruster.right);
+            Condition::damage(&condition.thruster.right);
             break;
         case 8:
-            Condition::damage(condition.cockpit);
+            Condition::damage(&condition.cockpit);
             break;
         case 11:
-            Condition::damage(condition.body);
+            Condition::damage(&condition.body);
             break;
         default:
             // no event
