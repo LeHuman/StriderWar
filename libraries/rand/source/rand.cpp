@@ -18,4 +18,9 @@ rand_t get(int high) {
     return uval % (high + 1);
 }
 
+rand_t get(int low, int high) {
+    int range = (high + 1) - low;
+    return get(range - 1) + low;
+}
+
 } // namespace random

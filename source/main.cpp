@@ -5,7 +5,6 @@
 #include <dos.h>
 #include <dos/graphics.hpp>
 #include <dos/sound.hpp>
-#include <dos/time.hpp>
 #include <graph.h>
 #include <i86.h>
 #include <process.h>
@@ -267,7 +266,6 @@ int main() {
         fread(dataB, 1, data_size, f);
         fclose(f);
         DOS::Draw::text(10, 10, "Joystick Cal Loaded", 3);
-        delay(100);
         DOS::Draw::text(10, 10, "Joystick Cal Loaded", 0);
     }
 

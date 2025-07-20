@@ -2,20 +2,6 @@
 
 #include <rand.hpp>
 
-// void Ship::trigger_breach() {
-//     if (pressure > 0) {
-//         breach = true;
-//     }
-// }
-
-// void Ship::trigger_fire() {
-//     if (pressure > 0) {
-//         inferno += 1;
-//     } else {
-//         inferno = 0;
-//     }
-// }
-
 void Ship::damage_roll() {
     switch (random::get(16)) {
         case 0:

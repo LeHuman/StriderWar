@@ -3,7 +3,6 @@
 #include <dos/graphics.hpp>
 #include <dos/input.hpp>
 #include <dos/sound.hpp>
-#include <dos/time.hpp>
 #include <stdarg.h>
 #include <stdio.h>
 #include <string.h>

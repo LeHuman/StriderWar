@@ -14,9 +14,6 @@ rand_t get();
 
 rand_t get(int high);
 
-rand_t get(int low, int high) {
-    int range = (high + 1) - low;
-    return get(range - 1) + low;
-}
+rand_t get(int low, int high);
 
 } // namespace random

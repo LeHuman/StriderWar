@@ -16,13 +16,13 @@ set(CMAKE_SYSTEM_NAME DOS)
 # -zq : operate quietly
 # -fr=nul : error file name
 # -xd : no exception handling
-# -oahi+nsx : relax alias checking, enable repeated optimizations, (C++) -oi with max inlining depth, numerically unstable floating-point, optimize for space, maximum optimization (-obmiler -s)
+# -oahi+nsx : relax alias checking, enable repeated optimizations, (C++) -oi+ with max inlining depth, numerically unstable floating-point, optimize for space, maximum optimization (-obmiler -s)
 # -s : remove stack overflow checks
 # -ei : force enums to be type int
 # -zp8 : struct packing align 8
 # -fpi87 : fpi87 inline 80x87
-add_compile_options(-bt=dos -mm -0 -d0 -zq -fr=nul -xd -onasx -s -oh -ei -zp8 -fpi87 ) #-oi+
-# add_compile_options(-bt=dos -mm -0 -d3)
+# -wcd=628 : Ignore "expression is not meaningful" for compiled out functions
+add_compile_options(-bt=dos -mm -0 -d0 -zq -fr=nul -xd -onasx -s -oh -ei -zp8 -fpi87 -wcd=628) #-oi+
 
 set(CMAKE_C_FLAGS "-za99")
 set(CMAKE_CXX_FLAGS "-ze -za0x")
@@ -36,7 +36,7 @@ add_subdirectory(libraries)
 
 # Add the executable target
 add_executable(${PROJECT_NAME} ${SOURCES})
-target_link_libraries(${PROJECT_NAME} DOSTime DOSGraphics DOSInput math rand DOSSound)
+target_link_libraries(${PROJECT_NAME} DOSGraphics DOSInput math rand DOSSound)
 
 include_directories(include)
 
