@@ -74,7 +74,6 @@ void Strider::step() {
     }
 
     if (has_physics && (bounce.y || bounce.x)) {
-        bounce.angle = fixed::atan2(vy, vx);
         if (bounce.x) {
             vx *= world::bounce_mult;
         }
@@ -83,7 +82,7 @@ void Strider::step() {
         }
     }
 
-    draw_counter_limit = (((draw_counter_max - fixed::sqrt(vx * vx + vy * vy).toInt() * (draw_counter_max / 4)) & draw_counter_max) / 2) | 1;
+    draw_counter_limit = (((draw_counter_max - ((vx * vx + vy * vy) / 4).toInt() * (draw_counter_max / 4)) & draw_counter_max) / 2) | 1;
 }
 
 void Strider::draw(bool force) {

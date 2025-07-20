@@ -8,6 +8,8 @@ OUTPUT_FILE = "include/math/math_lut.hpp"
 os.chdir(os.path.join(os.path.dirname(__file__), '..'))
 
 # Read defines from header file
+
+
 def parse_defines(filenames):
     defines = {}
     define_pattern = re.compile(r"#define\s+(\w+)\s+([\d]+)")
@@ -22,8 +24,10 @@ def parse_defines(filenames):
 
     return defines
 
+
 def write_fixed(val, scale):
     return str(int(round(val * scale)))
+
 
 def gen_sin_table(size, scale):
     out = [f"static const int16_t sinTable[{size}] = {{"]
@@ -33,6 +37,7 @@ def gen_sin_table(size, scale):
         out.append(f"    {val},")
     out.append("};\n")
     return "\n".join(out)
+
 
 def gen_atan2_table(size, output_max):
     scale = output_max / (2.0 * math.pi)  # radians → 0-255
@@ -44,6 +49,7 @@ def gen_atan2_table(size, output_max):
     out.append("};\n")
     return "\n".join(out)
 
+
 def gen_sqrt_table(size, scale):
     out = [f"static const int16_t sqrtLUT[{size}] = {{"]
     for i in range(size):
@@ -51,6 +57,7 @@ def gen_sqrt_table(size, scale):
         out.append(f"    {val},")
     out.append("};\n")
     return "\n".join(out)
+
 
 def gen_log_table(size, scale):
     out = [f"static const int16_t logLUT[{size}] = {{"]
@@ -63,16 +70,17 @@ def gen_log_table(size, scale):
     out.append("};\n")
     return "\n".join(out)
 
+
 def main():
     defines = parse_defines(HEADER_FILES)
 
     FIXED_SHIFT = defines.get("FIXED_SHIFT", 4)
     FIXED_SCALE = 1 << FIXED_SHIFT
 
-    SIN_SIZE = defines.get("TRIG_RESOLUTION", 256)
-    ATAN_SIZE = defines.get("ATAN2_LUT_SIZE", 256)
-    SQRT_SIZE = defines.get("LUT_RESOLUTION", 256)
-    LOG_SIZE  = defines.get("LUT_RESOLUTION", 256)
+    SIN_SIZE = defines.get("TRIG_LUT_SIZE", 0)
+    ATAN_SIZE = defines.get("ATAN2_LUT_SIZE", 0)
+    SQRT_SIZE = defines.get("SQRT_LUT_SIZE", 0)
+    LOG_SIZE = defines.get("LOG_SQRT_SIZE", 0)
 
     with open(OUTPUT_FILE, "w") as f:
         f.write("#pragma once\n\n")
@@ -84,6 +92,7 @@ def main():
         f.write(gen_log_table(LOG_SIZE, FIXED_SCALE))
         f.write("} // namespace math\n")
         print(f"{OUTPUT_FILE} generated.")
+
 
 if __name__ == "__main__":
     main()

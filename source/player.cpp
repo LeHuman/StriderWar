@@ -91,27 +91,17 @@ void Player::step() {
     ship.entity.step();
 
     if (bounced == 0 && (ship.entity.bounce.x || ship.entity.bounce.y)) {
+        const Fixed &x = ship.entity.x;
+        const Fixed &y = ship.entity.y;
+
         bounced = 4;
         ship.entity.bounce.x = false;
         ship.entity.bounce.y = false;
 
-        static const Fixed spark_dist = 0.25f;
-        static const Fixed spark_tail = -0.5f;
-        static const Fixed spark_deflect_rad = 30.0f;
-
-        if (ship.entity.bounce.angle < fixed::PI) {
-            ship.entity.bounce.angle -= spark_deflect_rad;
-        } else {
-            ship.entity.bounce.angle += spark_deflect_rad;
-        }
-
-        Fixed dx = fixed::cos(ship.entity.bounce.angle);
-        Fixed dy = fixed::sin(ship.entity.bounce.angle);
-
-        spark.x0 = ship.entity.x - (dx * spark_dist);
-        spark.y0 = ship.entity.y - (dy * spark_dist);
-        spark.x1 = spark.x0 + (dx * spark_tail);
-        spark.y1 = spark.y0 + (dy * spark_tail);
+        spark.x0 = x;
+        spark.y0 = y;
+        spark.x1 = spark.x0 + random::get(-8, 8);
+        spark.y1 = spark.y0 + random::get(-8, 8);
     }
 
     bool fire = false;

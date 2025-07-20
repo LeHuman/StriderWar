@@ -27,9 +27,6 @@ public:
     struct bounce_t {
         bool x;
         bool y;
-        math::Fixed angle;
-
-        bounce_t() : x(false), y(false) {}
     } bounce;
 
     Strider() : trail_count(2), last_count(0), count(1), draw_counter(0), draw_counter_limit(4), draw_counter_max(7), x(0), y(0), vx(0), vy(0), color(1), enabled(false), has_physics(false) {}
