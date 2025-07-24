@@ -1,6 +1,6 @@
 # Paths
-$source = "F:\GitHub\dostest\build\DOSTest.exe"
-$destination = "D:\APPS\DOSTest.exe"
+$source = "F:\GitHub\StriderWar\build\StriderWar.exe"
+$destination = "D:\APPS\SWar.exe"
 $driveLetter = "D"
 
 Write-Host "Building"

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.20)
-project(DOSTest VERSION 0.1.0 LANGUAGES C CXX)
+project(StriderWar VERSION 0.1.0 LANGUAGES C CXX)
 
 # Enable export of compile commands (useful for tooling)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)

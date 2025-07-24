@@ -4,6 +4,6 @@ $dosbox_path = "C:/DOSBox-X/dosbox-x.exe"
 cmake --build build --target clean
 cmake --build build --config Release --target all
 
-cp .\build\DOSTest.exe .\dev\DOSTest.exe
+cp .\build\StriderWar.exe .\dev\SWar.exe
 
-& $dosbox_path ('dev\DOSTest.exe', '-conf', 'scripts\dosbox-x.conf', '-exit') 
+& $dosbox_path ('dev\SWar.exe', '-conf', 'scripts\dosbox-x.conf', '-exit') 
