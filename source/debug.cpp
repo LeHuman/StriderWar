@@ -20,24 +20,24 @@ inline size_t increment_color(size_t &color) {
     return ((color + 1) % (DOS::Draw::COLOR_MAX - 1)) + 1;
 }
 
-DOS::Time::Timer timer;
+// DOS::Time::Timer timer;
 
 void loop_time_start() {
-    timer.beginFrame();
+    // timer.beginFrame();
 }
 
 void loop_time_stop() {
-    static uint16_t ty = 0;
-    static size_t color = 0;
+    // static uint16_t ty = 0;
+    // static size_t color = 0;
 
-    uint16_t time = timer.elapsedMs();
-    uint8_t dist = time / 50;
-    color = increment_color(color);
+    // uint16_t time = timer.elapsedMs();
+    // uint8_t dist = time / 50;
+    // color = increment_color(color);
 
-    DOS::Draw::line(dist, ty, dist * 2, ty, 0);
-    DOS::Draw::line(0, ty, dist, ty, color);
+    // DOS::Draw::line(dist, ty, dist * 2, ty, 0);
+    // DOS::Draw::line(0, ty, dist, ty, color);
 
-    ty = (ty + 1) % DOS::Video::HEIGHT;
+    // ty = (ty + 1) % DOS::Video::HEIGHT;
 }
 
 void sprite_trigger_rand() {

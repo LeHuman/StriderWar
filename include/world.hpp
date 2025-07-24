@@ -26,13 +26,33 @@ static const uint16_t Y_MAX = DOS::Video::HEIGHT * 0.96f;
 static const uint16_t X_CENTER = DOS::Video::WIDTH / 2;
 static const uint16_t Y_CENTER = DOS::Video::HEIGHT / 2;
 
+#ifdef WORLD_OVERRIDE
+static const size_t MAX_PLAYERS = 10;
+#else
 static const size_t MAX_PLAYERS = 2;
+#endif
+
 static const size_t MAX_EXPLOSIONS = 8;
 
 extern size_t current_players;
 extern Player *players[MAX_PLAYERS];
 
 int add_player(Player &player);
+
+inline bool check_bullet(const Bullet &bullet, const Player *player) {
+    const int blast_radius = 8 + bullet.mult.damage;
+    const math::Fixed &x = bullet.entity.x;
+    const math::Fixed &y = bullet.entity.y;
+
+    const math::Fixed &sx = player->ship.entity.x;
+    const math::Fixed &sy = player->ship.entity.y;
+
+    const int dx = (int)(sx - x) / 2;
+    const int dy = (int)(sy - y) / 2;
+
+    return ((dx * dx) + (dy * dy)) < (blast_radius * blast_radius / 2);
+}
+
 void explode(Bullet &bullet);
 
 } // namespace world

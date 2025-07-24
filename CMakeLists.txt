@@ -6,8 +6,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # Specify the target system as DOS
 set(CMAKE_SYSTEM_NAME DOS)
-
-# add_compile_definitions(DOSBOX)
+set(DOSBOX_DEBUG ON)
 
 # -bt=dos : Compile for DOS
 # -mm : Medium Memory model
@@ -40,8 +39,15 @@ target_link_libraries(${PROJECT_NAME} DOSGraphics DOSInput math rand DOSSound)
 
 include_directories(include)
 
+if(DOSBOX_DEBUG)
+add_compile_definitions(DOSBOX)
+# add_compile_definitions(DEBUG_ENABLE_FUNCTIONS)
+add_compile_definitions(WORLD_OVERRIDE)
+message("Compiling for debug on DOSBOX")
+else()
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E echo "Checking binary size..."
     COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/scripts/check_size.bat \"$<TARGET_FILE:${PROJECT_NAME}>\"
     COMMENT "Verifying ${TARGET_NAME} binary size is under 87 KB"
 )
+endif()

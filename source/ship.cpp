@@ -6,11 +6,14 @@ void Ship::damage_roll() {
     switch (random::get(16)) {
         case 0:
         case 1:
+        case 7:
+        case 10:
         case 15:
             debug::serial_print("fire\n");
             trigger_fire();
             break;
         case 3:
+        case 14:
             debug::serial_print("breach\n");
             trigger_breach();
             break;

@@ -59,6 +59,8 @@ struct Dummy : DOS::Input::Interface {
             too_slow = 0;
             ltx = (ty * 2) - (ltx / 2);
             lty = (tx * 2) - (lty / 2);
+            ltx += random::get(world::X_MIN, world::X_MAX) / 2;
+            lty += random::get(world::Y_MIN, world::Y_MAX) / 2;
         } else if (backtrack_active) {
             if ((--backtrack) <= back_time_off) {
                 backtrack = 0;
@@ -86,7 +88,7 @@ struct Dummy : DOS::Input::Interface {
             fire = false;
             wait++;
             wait %= wait_time - (player->bullets[0].mult.damage + player->bullets[1].mult.damage) - s.toInt();
-            alt = wait == 0;
+            alt = wait == 0 || world::check_bullet(player->bullets[0], target);
         } else if ((backtrack <= back_time_mid) && (((dx * dx) + (dy * dy)) < (target_range * target_range / 2))) {
             fire = true;
             alt = false;

@@ -42,10 +42,7 @@ void explode(Bullet &bullet) {
         const Fixed &sx = players[i]->ship.entity.x;
         const Fixed &sy = players[i]->ship.entity.y;
 
-        const int dx = (int)(sx - x) / 2;
-        const int dy = (int)(sy - y) / 2;
-
-        if (((dx * dx) + (dy * dy)) < (blast_radius * blast_radius / 2)) {
+        if (check_bullet(bullet, players[i])) {
             DOS::Draw::line(x, y, sx, sy, 2);
             players[i]->ship.entity.pulse(random::get(-blast_radius, blast_radius), random::get(-blast_radius, blast_radius));
             players[i]->damage(random::get(1, bullet.mult.damage + 1));

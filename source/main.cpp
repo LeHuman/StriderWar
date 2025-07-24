@@ -169,6 +169,7 @@ void temp_set_sprite(Player::status &status, size_t sprite_id) {
     status.acknowledge();
 
     DOS::CGA::load_sprite(sprite_id, color, DOS::CGA::PERFECT, 0);
+    debug::serial_print("s");
 }
 
 void temp_player_sprite_handle_a(Player &player) {
@@ -231,6 +232,15 @@ void temp_player_sprite_handle_b(Player &player) {
     temp_set_sprite(player.situation.panel.dead, sprite::b_p_dead);
 }
 
+void temp_set_sprites(Player &playerA, Player &playerB) {
+    static const size_t max = 100;
+    static size_t i = 0;
+    if (i++ % max == 0) {
+        temp_player_sprite_handle_a(playerA);
+        temp_player_sprite_handle_b(playerB);
+    }
+}
+
 void clear_screen() {
     DOS::Draw::rectangle(world::X_MIN - 4, world::Y_MIN - 4, world::X_MAX + 4, world::Y_MAX + 4, 0, true);
 }
@@ -256,8 +266,38 @@ int main() {
     Player playerB(inputB, sit_mem_B);
     inputB.set_target(&playerA);
     inputB.set_player(&playerB);
+#ifdef DOSBOX
+    dummy::Dummy inputx[6];
+    Player::situation_t sit_mem_C;
+    Player player0(inputx[0], sit_mem_C);
+    inputx[0].set_player(&player0);
+    Player player1(inputx[1], sit_mem_C);
+    inputx[1].set_player(&player1);
+    Player player2(inputx[2], sit_mem_C);
+    inputx[2].set_player(&player2);
+    Player player3(inputx[3], sit_mem_C);
+    inputx[3].set_player(&player3);
+    Player player4(inputx[4], sit_mem_C);
+    inputx[4].set_player(&player4);
+    Player player5(inputx[5], sit_mem_C);
+    inputx[5].set_player(&player5);
+    // Player player6(inputx[6], sit_mem_C);
+    // inputx[6].set_player(&player6);
+    // Player player7(inputx[7], sit_mem_C);
+    // inputx[7].set_player(&player7);
 
-    FILE *f = fopen("joystick.cal", "rb");
+    inputx[0].set_target(&player2);
+    inputx[1].set_target(&playerA);
+    inputx[2].set_target(&player0);
+    inputx[3].set_target(&playerA);
+    inputx[4].set_target(&player1);
+    inputx[5].set_target(&playerA);
+    // inputx[6].set_target(&player3);
+    // inputx[7].set_target(&player4);
+#endif
+
+    FILE *f
+        = fopen("joystick.cal", "rb");
     if (f) {
         uint8_t *dataA = (uint8_t *)&DOS::Input::Joystick::playerA.cal;
         uint8_t *dataB = (uint8_t *)&DOS::Input::Joystick::playerB.cal;
@@ -314,6 +354,14 @@ int main() {
         inputB.update();
         DOS::Input::Joystick::update();
 
+#ifdef DOSBOX
+        if (playerB.valid())
+            for (size_t i = 0; i < (sizeof(inputx) / sizeof(inputx[0])); i++) {
+                inputx[i].update();
+            }
+
+#endif
+
         if (!playerA.valid() && (DOS::Input::Joystick::playerA.fire || DOS::Input::Joystick::playerA.alt)) {
             temp_play_A_join();
             clear_screen();
@@ -324,6 +372,16 @@ int main() {
             temp_play_B_join();
             clear_screen();
             world::add_player(playerB);
+#ifdef DOSBOX
+            world::add_player(player0);
+            world::add_player(player1);
+            world::add_player(player2);
+            world::add_player(player3);
+            world::add_player(player4);
+            world::add_player(player5);
+            // world::add_player(player6);
+            // world::add_player(player7);
+#endif
         }
 
         for (size_t i = 0; i < world::current_players; i++) {

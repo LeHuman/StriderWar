@@ -7,10 +7,6 @@
 #include <stdio.h>
 #include <string.h>
 
-#ifdef DOSBOX
-#define DEBUG_ENABLE_FUNCTIONS
-#endif
-
 namespace debug {
 
 #ifdef DEBUG_ENABLE_FUNCTIONS
