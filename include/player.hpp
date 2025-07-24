@@ -10,6 +10,8 @@
 #include "ship.hpp"
 #include "strider.hpp"
 
+extern bool player_situation_update;
+
 struct Player {
     static const size_t MAX_MELTDOWN_CYCLES = 1000;
     static const size_t MAX_BULLETS = 2;
@@ -43,6 +45,7 @@ struct Player {
         void set(const status_e &set) {
             if ((v << 4) != set) {
                 v = set;
+                player_situation_update = true;
             }
         }
 

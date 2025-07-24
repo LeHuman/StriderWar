@@ -8,6 +8,8 @@
 
 using namespace math;
 
+bool player_situation_update = true;
+
 Player::Player(DOS::Input::Interface &input, situation_t &situation_mem) : id(-1), damage_queue(0), enabled_bullets(0), input(input), last_bullet(false), req_bullet(false), bounced(0), situation(situation_mem), situation_cycle(0), meltdown_cycle(0) {
     ship.entity.x = world::X_CENTER;
     ship.entity.y = world::Y_CENTER;

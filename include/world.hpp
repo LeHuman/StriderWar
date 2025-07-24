@@ -10,10 +10,10 @@ namespace world {
 static const math::Fixed gravity = 0.45f;
 static const math::Fixed friction = 0.999f;
 static const math::Fixed bounce_mult = -0.92f;
-static const math::Fixed tail_mult = 2.0f;
+static const math::Fixed tail_mult = 2.5f;
 
 static const math::Fixed bullet_speed = 0.3f;
-static const math::Fixed bullet_tail = 2.0f;
+static const math::Fixed bullet_tail = 3.5f;
 
 // (200-8) / 200=0.96
 // (320-68) / 320=0.7875
@@ -40,7 +40,7 @@ extern Player *players[MAX_PLAYERS];
 int add_player(Player &player);
 
 inline bool check_bullet(const Bullet &bullet, const Player *player) {
-    const int blast_radius = 8 + bullet.mult.damage;
+    const int blast_radius = 10 + bullet.mult.damage;
     const math::Fixed &x = bullet.entity.x;
     const math::Fixed &y = bullet.entity.y;
 
@@ -51,6 +51,12 @@ inline bool check_bullet(const Bullet &bullet, const Player *player) {
     const int dy = (int)(sy - y) / 2;
 
     return ((dx * dx) + (dy * dy)) < (blast_radius * blast_radius / 2);
+}
+
+inline void draw() {
+    for (size_t i = 0; i < world::current_players; i++) {
+        world::players[i]->draw();
+    }
 }
 
 void explode(Bullet &bullet);

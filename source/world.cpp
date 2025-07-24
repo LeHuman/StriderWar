@@ -29,14 +29,14 @@ int add_player(Player &player) {
 }
 
 void explode(Bullet &bullet) {
-    const int blast_radius = 8 + bullet.mult.damage;
+    const int blast_radius = 10 + bullet.mult.damage;
     const Fixed &x = bullet.entity.x;
     const Fixed &y = bullet.entity.y;
 
-    DOS::Draw::pixel(x - bullet.mult.damage, y - bullet.mult.damage, 3);
-    DOS::Draw::pixel(x - bullet.mult.damage, y + bullet.mult.damage, 3);
-    DOS::Draw::pixel(x + bullet.mult.damage, y - bullet.mult.damage, 3);
-    DOS::Draw::pixel(x + bullet.mult.damage, y + bullet.mult.damage, 3);
+    DOS::Draw::pixel(x - blast_radius, y - blast_radius, 3);
+    DOS::Draw::pixel(x - blast_radius, y + blast_radius, 3);
+    DOS::Draw::pixel(x + blast_radius, y - blast_radius, 3);
+    DOS::Draw::pixel(x + blast_radius, y + blast_radius, 3);
 
     for (size_t i = 0; i < current_players; i++) {
         const Fixed &sx = players[i]->ship.entity.x;

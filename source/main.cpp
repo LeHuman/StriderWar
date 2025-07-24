@@ -16,14 +16,14 @@
 #include "sprite_map.hpp"
 #include "world.hpp"
 
-void temp_handle_sound(Player &playerA, Player &playerB) {
-    static uint8_t total_bullets = 0;
-    static uint16_t sound_down = 0;
-    static uint16_t sound_blap = 0;
-    static uint16_t sound_crrsh = 0;
-    static uint16_t sound_freq = 0;
-    static bool silent = false;
+static uint8_t total_bullets = 0;
+static uint16_t sound_down = 0;
+static uint16_t sound_blap = 0;
+static uint16_t sound_crrsh = 0;
+static uint16_t sound_freq = 0;
+static bool silent = false;
 
+void temp_handle_sound(Player &playerA, Player &playerB) {
     if ((playerA.enabled_bullets + playerB.enabled_bullets) != total_bullets) {
         if ((playerA.enabled_bullets + playerB.enabled_bullets) > total_bullets) {
             sound_down = 800;
@@ -72,7 +72,7 @@ void temp_handle_sound(Player &playerA, Player &playerB) {
     }
 
     if (sound_freq) {
-        sound(sound_freq);
+        // sound(sound_freq);
     }
 }
 
@@ -83,6 +83,7 @@ void temp_play_start_tune() {
     delay(50);
     DOS::Sound::play(500, 9, 600, 10, 200, 3, 2, 5, 100);
     delay(100);
+    DOS::Sound::play(0, 0, 0, 0, 0, 0, 0, 0, 0);
     DOS::Sound::silence();
 }
 
@@ -172,7 +173,7 @@ void temp_set_sprite(Player::status &status, size_t sprite_id) {
     debug::serial_print("s");
 }
 
-void temp_player_sprite_handle_a(Player &player) {
+inline void temp_player_sprite_handle_a(Player &player) {
     temp_set_sprite(player.situation.ship.pilot, sprite::a_ship_pilot);
     temp_set_sprite(player.situation.ship.body, sprite::a_ship_body);
     temp_set_sprite(player.situation.ship.thruster.left, sprite::a_ship_thruster_left);
@@ -202,7 +203,7 @@ void temp_player_sprite_handle_a(Player &player) {
     temp_set_sprite(player.situation.panel.dead, sprite::a_p_dead);
 }
 
-void temp_player_sprite_handle_b(Player &player) {
+inline void temp_player_sprite_handle_b(Player &player) {
     temp_set_sprite(player.situation.ship.pilot, sprite::b_ship_pilot);
     temp_set_sprite(player.situation.ship.body, sprite::b_ship_body);
     temp_set_sprite(player.situation.ship.thruster.left, sprite::b_ship_thruster_left);
@@ -232,12 +233,13 @@ void temp_player_sprite_handle_b(Player &player) {
     temp_set_sprite(player.situation.panel.dead, sprite::b_p_dead);
 }
 
-void temp_set_sprites(Player &playerA, Player &playerB) {
+inline void temp_set_sprites(Player &playerA, Player &playerB) {
     static const size_t max = 100;
     static size_t i = 0;
-    if (i++ % max == 0) {
+    if ((i++ % max == 0) && player_situation_update) {
         temp_player_sprite_handle_a(playerA);
         temp_player_sprite_handle_b(playerB);
+        player_situation_update = true;
     }
 }
 
@@ -331,14 +333,14 @@ int main() {
 
                     FILE *f = fopen("joystick.cal", "wb");
                     if (!f) {
-                        printf("Could not open joystick.cal!\n");
+                        debug::serial_printf("Could not open joystick.cal!\n");
                         break;
                     }
 
                     size_t written = fwrite(dataA, 1, data_size, f);
                     written += fwrite(dataB, 1, data_size, f);
                     if (written != (data_size * 2)) {
-                        printf("Write failed!\n");
+                        debug::serial_printf("Write failed!\n");
                         fclose(f);
                         break;
                     }
@@ -346,12 +348,24 @@ int main() {
                     fclose(f);
 
                 } break;
+                case 'r':
+                    sound_down = 0;
+                    sound_blap = 0;
+                    sound_crrsh = 0;
+                    sound_freq = 0;
+                    silent = 1;
+                    DOS::Sound::silence();
+                    break;
                 default:
                     break;
             }
         }
 
-        inputB.update();
+        static const size_t max = 4;
+        static size_t i = 0;
+        if (i++ % max == 0) {
+            inputB.update();
+        }
         DOS::Input::Joystick::update();
 
 #ifdef DOSBOX
@@ -389,12 +403,9 @@ int main() {
         }
 
         temp_handle_sound(playerA, playerB);
-        temp_player_sprite_handle_a(playerA);
-        temp_player_sprite_handle_b(playerB);
+        temp_set_sprites(playerA, playerB);
 
-        for (size_t i = 0; i < world::current_players; i++) {
-            world::players[i]->draw();
-        }
+        world::draw();
 
         if (world::current_players == 0) {
             DOS::Input::Joystick::playerA.calibrate_step();
