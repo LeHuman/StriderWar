@@ -28,7 +28,7 @@ This project is more so an exercise in developing under a different set of const
 
 ## Demo
 
-![Demo](images/demo.mp4)
+![Demo](images/demo.gif)
 
 ## Usage
 
