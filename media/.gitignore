@@ -1,0 +1,12 @@
+# Ignore everything
+*
+
+# But not these files...
+!.gitignore
+!Chop.png
+!Chop.psd
+!Proto.psd
+!Title.png
+!Proto.png
+!sprite_map
+!sprite_map/*

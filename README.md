@@ -4,11 +4,11 @@
 <!-- TECHNOLOGY: Watcom  -->
 
 <!-- LOGO -->
-![Logo](<images/Title.png>)
+![Logo](<images/title.png>)
 
 [![CI](https://github.com/lehuman/StriderWar/workflows/CI/badge.svg)](https://github.com/lehuman/StriderWar/actions)
 
-[About](#about) - [Usage](#usage) - [Related](#related) - [License](#license)
+[About](#about) - [Demo](#demo) - [Usage](#usage) - [Related](#related) - [License](#license)
 
 ## Status
 
@@ -25,6 +25,10 @@ This is a game developed for the [IBM PC Jr](https://en.wikipedia.org/wiki/IBM_P
 I was always curious in developing for vintage hardware. I recently came across a cheap IBM PC Jr setup and decided to make something for it. Although there are more ways to squeeze way more out of this already underpowered machine, I decided to stick with a DOS app written in Watcom C++.
 
 This project is more so an exercise in developing under a different set of constraints from what I am used to.
+
+## Demo
+
+![Demo](images/Demo.mp4)
 
 ## Usage
 
@@ -99,6 +103,10 @@ Or run the following script.
 ```bat
 SWAR
 ```
+
+## Gameplay
+
+TODO: Game rules and controls
 
 ## Related
 
