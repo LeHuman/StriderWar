@@ -23,7 +23,7 @@ struct Dummy : DOS::Input::Interface {
     void update() {
         static const int target_range = 30;
         static const int wait_time = 20;
-        static const int back_time_on = 120;
+        static const int back_time_on = 105;
         static const int back_time_mid = 50;
         static const int back_time_off = 90;
         static const int slow_limit = 100;
@@ -55,7 +55,7 @@ struct Dummy : DOS::Input::Interface {
 
         if (too_slow >= slow_limit) {
             backtrack_active = true;
-            backtrack = back_time_on;
+            backtrack = back_time_off + 10;
             too_slow = 0;
             ltx = (ty * 2) - (ltx / 2);
             lty = (tx * 2) - (lty / 2);

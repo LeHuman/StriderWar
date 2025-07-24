@@ -72,7 +72,7 @@ void temp_handle_sound(Player &playerA, Player &playerB) {
     }
 
     if (sound_freq) {
-        // sound(sound_freq);
+        sound(sound_freq);
     }
 }
 
