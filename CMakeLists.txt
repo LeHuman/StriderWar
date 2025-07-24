@@ -6,7 +6,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # Specify the target system as DOS
 set(CMAKE_SYSTEM_NAME DOS)
-set(DOSBOX_DEBUG ON)
+set(DOSBOX_DEBUG OFF)
 
 # -bt=dos : Compile for DOS
 # -mm : Medium Memory model
@@ -41,7 +41,7 @@ include_directories(include)
 
 if(DOSBOX_DEBUG)
 add_compile_definitions(DOSBOX)
-# add_compile_definitions(DEBUG_ENABLE_FUNCTIONS)
+add_compile_definitions(DEBUG_ENABLE_FUNCTIONS)
 add_compile_definitions(WORLD_OVERRIDE)
 message("Compiling for debug on DOSBOX")
 else()
