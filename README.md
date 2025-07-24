@@ -1,4 +1,4 @@
-<!-- TITLE: Strider War -->
+<!-- TITLE: StriderWar -->
 <!-- KEYWORDS: game, graphics -->
 <!-- LANGUAGES: C++, Python -->
 <!-- TECHNOLOGY: Watcom  -->
@@ -6,7 +6,7 @@
 <!-- LOGO -->
 ![Logo](<images/Title.png>)
 
-[![CI](https://github.com/lehuman/strider-war/workflows/CI/badge.svg)](https://github.com/lehuman/strider-war/actions)
+[![CI](https://github.com/lehuman/StriderWar/workflows/CI/badge.svg)](https://github.com/lehuman/StriderWar/actions)
 
 [About](#about) - [Usage](#usage) - [Related](#related) - [License](#license)
 
