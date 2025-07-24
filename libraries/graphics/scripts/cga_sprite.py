@@ -93,7 +93,7 @@ if __name__ == "__main__":
 
     input_path = args.input
     output_dir = args.output_dir
-    map_dir = args.map_dir if os.path.isdir(args.map_dir) else None
+    map_dir = args.map_dir if args.map_dir and os.path.isdir(args.map_dir) else None
     raw_filepath, _ = os.path.splitext(input_path)
     filename = os.path.split(raw_filepath)[-1]
     img = Image.open(input_path)
