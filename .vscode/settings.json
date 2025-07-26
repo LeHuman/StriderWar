@@ -67,7 +67,8 @@
         "unordered_map": "cpp",
         "xhash": "cpp",
         "xlocinfo": "cpp",
-        "string": "cpp"
+        "string": "cpp",
+        "xiosbase": "cpp"
     },
     "sonarlint.pathToCompileCommands": "${workspaceFolder}\\build\\compile_commands.json"
 }

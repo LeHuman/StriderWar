@@ -262,7 +262,9 @@ int main() {
     DOS::Input::Joystick::initialize(false);
 #endif
 
-    Player playerA(DOS::Input::Joystick::playerA, sit_mem_A);
+    DOS::Input::Keyboard::initialize();
+
+    Player playerA(DOS::Input::Keyboard::playerA, sit_mem_A);
 
     dummy::Dummy inputB;
     Player playerB(inputB, sit_mem_B);
@@ -320,53 +322,39 @@ int main() {
 
     bool run = true;
     while (run) {
-        if (kbhit()) {
-            int ch = getch();
-            switch (ch) {
-                case 'x':
-                    run = false;
-                    break;
-                case 'y': {
-                    const uint8_t *dataA = (uint8_t *)&DOS::Input::Joystick::playerA.cal;
-                    const uint8_t *dataB = (uint8_t *)&DOS::Input::Joystick::playerB.cal;
-                    const size_t data_size = sizeof(DOS::Input::Joystick::playerA.cal);
-
-                    FILE *f = fopen("joystick.cal", "wb");
-                    if (!f) {
-                        debug::serial_printf("Could not open joystick.cal!\n");
-                        break;
-                    }
-
-                    size_t written = fwrite(dataA, 1, data_size, f);
-                    written += fwrite(dataB, 1, data_size, f);
-                    if (written != (data_size * 2)) {
-                        debug::serial_printf("Write failed!\n");
-                        fclose(f);
-                        break;
-                    }
-
-                    fclose(f);
-
-                } break;
-                case 'r':
-                    sound_down = 0;
-                    sound_blap = 0;
-                    sound_crrsh = 0;
-                    sound_freq = 0;
-                    silent = 1;
-                    DOS::Sound::silence();
-                    break;
-                default:
-                    break;
-            }
+        if (DOS::Input::Keyboard::exit_requested) {
+            run = false;
+            break;
         }
+        if (DOS::Input::Keyboard::save_requested) {
+            const uint8_t *dataA = (uint8_t *)&DOS::Input::Joystick::playerA.cal;
+            const uint8_t *dataB = (uint8_t *)&DOS::Input::Joystick::playerB.cal;
+            const size_t data_size = sizeof(DOS::Input::Joystick::playerA.cal);
 
+            FILE *f = fopen("joystick.cal", "wb");
+            if (!f) {
+                debug::serial_printf("Could not open joystick.cal!\n");
+                break;
+            }
+
+            size_t written = fwrite(dataA, 1, data_size, f);
+            written += fwrite(dataB, 1, data_size, f);
+            if (written != (data_size * 2)) {
+                debug::serial_printf("Write failed!\n");
+                fclose(f);
+                break;
+            }
+
+            fclose(f);
+        }
         static const size_t max = 4;
         static size_t i = 0;
         if (i++ % max == 0) {
             inputB.update();
         }
+
         DOS::Input::Joystick::update();
+        DOS::Input::Keyboard::update();
 
 #ifdef DOSBOX
         if (playerB.valid())
@@ -376,13 +364,13 @@ int main() {
 
 #endif
 
-        if (!playerA.valid() && (DOS::Input::Joystick::playerA.fire || DOS::Input::Joystick::playerA.alt)) {
+        if (!playerA.valid() && (DOS::Input::Joystick::playerA.fire || DOS::Input::Joystick::playerA.alt || DOS::Input::Keyboard::playerA.fire)) {
             temp_play_A_join();
             clear_screen();
             world::add_player(playerA);
         }
 
-        if (!playerB.valid() && (DOS::Input::Joystick::playerB.fire || DOS::Input::Joystick::playerB.alt)) {
+        if (!playerB.valid() && (DOS::Input::Joystick::playerB.fire || DOS::Input::Joystick::playerB.alt || DOS::Input::Keyboard::playerB.fire)) {
             temp_play_B_join();
             clear_screen();
             world::add_player(playerB);
@@ -414,5 +402,6 @@ int main() {
     }
 
     DOS::Sound::silence();
+    DOS::Input::Keyboard::shutdown();
     return 0;
 }
