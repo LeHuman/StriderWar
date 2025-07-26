@@ -23,7 +23,7 @@ static uint16_t sound_crrsh = 0;
 static uint16_t sound_freq = 0;
 static bool silent = false;
 
-void temp_handle_sound(Player &playerA, Player &playerB) {
+inline void temp_handle_sound(Player &playerA, Player &playerB) {
     if ((playerA.enabled_bullets + playerB.enabled_bullets) != total_bullets) {
         if ((playerA.enabled_bullets + playerB.enabled_bullets) > total_bullets) {
             sound_down = 800;
@@ -76,7 +76,7 @@ void temp_handle_sound(Player &playerA, Player &playerB) {
     }
 }
 
-void temp_play_start_tune() {
+inline void temp_play_start_tune() {
     DOS::Sound::play(775, 10, 650, 10, 200, 3, 2, 8, 200);
     delay(100);
     DOS::Sound::play(775, 10, 650, 0, 200, 3, 2, 0, 200);
@@ -87,7 +87,7 @@ void temp_play_start_tune() {
     DOS::Sound::silence();
 }
 
-void temp_play_A_join() {
+inline void temp_play_A_join() {
     sound(784);
     delay(30);
 
@@ -117,7 +117,7 @@ void temp_play_A_join() {
     nosound();
 }
 
-void temp_play_B_join() {
+inline void temp_play_B_join() {
     sound(1047);
     delay(30);
 
