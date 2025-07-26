@@ -8,7 +8,7 @@
 
 [![CI](https://github.com/lehuman/StriderWar/workflows/CI/badge.svg)](https://github.com/lehuman/StriderWar/actions)
 
-[About](#about) - [Demo](#demo) - [Usage](#usage) - [Related](#related) - [License](#license)
+[About](#about) - [Demo](#demo) - [Usage](#usage) - [Gameplay](#gameplay) - [Related](#related) - [License](#license)
 
 ## Status
 
@@ -28,7 +28,8 @@ This project is more so an exercise in developing under a different set of const
 
 ## Demo
 
-![Demo](images/demo.gif)
+![Demo](images/demo.gif)\
+*Running on DOSBOX-X (So a bit faster than normal)*
 
 ## Usage
 
@@ -112,6 +113,7 @@ TODO: Game rules and controls
 
 - [Technical Reference Manual](https://bitsavers.trailing-edge.com/pdf/ibm/pc/pc_jr/PCjr_Technical_Reference_Nov83.pdf)
 - int10h/[ibm-5153-color-true-cga-palette](https://int10h.org/blog/2022/06/ibm-5153-color-true-cga-palette/)
+- maizure/[decoded-sopwith](https://www.maizure.org/projects/decoded-sopwith/index.html)
 - ricardoquesada/[bios-8088](https://github.com/ricardoquesada/bios-8088)
 
 ## License
