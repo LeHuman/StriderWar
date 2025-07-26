@@ -2,6 +2,7 @@ import argparse
 import os
 import sys
 from typing import Any
+from itertools import batched
 
 from PIL import Image
 
@@ -17,10 +18,27 @@ COLOR_TO_INDEX = {
     '198c0f': 1, 'df0025': 2, 'd4a714': 3,
 }
 
+COLOR_INDEX_STR = [f'0x{v}' for v in COLOR_TO_INDEX]
+COLOR_INDEX_STR = [', '.join(g) for g in batched(COLOR_INDEX_STR[1:], 3)] + [f'{COLOR_INDEX_STR[0]}']
+COLOR_INDEX_STR = '\n    '.join(COLOR_INDEX_STR)
+
 COLOR_TO_INDEX = {
     tuple(int(hx[i:i+2], 16) for i in (0, 2, 4)): val
     for hx, val in COLOR_TO_INDEX.items()
 }
+
+VALID_COLORS_STR = f"""
+Valid colors:
+    {COLOR_INDEX_STR}
+"""
+
+VALID_FILE_SIZES_STR = """
+Valid file sizes and output:
+    320x200 : .cga
+    320x400 : .cgi
+    640x200 : .hga
+    640x400 : .hgi
+"""
 
 
 def nearest_match(color):
@@ -81,19 +99,11 @@ def convert_image_to_cga(input_png, output_bin, interlaced=False):
     print(f"Saved CGA {'interlaced ' if interlaced else ''}image to {output_bin}")
 
 
-VALID_FILE_SIZES_STR = """
-Valid file sizes and output:
-    320x200 : .cga
-    320x400 : .cgi
-    640x200 : .hga
-    640x400 : .hgi
-"""
-
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         prog=sys.argv[0] if len(sys.argv) >= 1 else "png2cga.py",
         description='Convert PNGs to a CGA Image for the IBM PC JR.',
-        epilog=f'NOTE: file extension is automatically output based on file size.\n{VALID_FILE_SIZES_STR}',
+        epilog=f'NOTE: file extension is automatically output based on file size.\n{VALID_FILE_SIZES_STR}\n{VALID_COLORS_STR}',
         formatter_class=argparse.RawDescriptionHelpFormatter)
 
     parser.add_argument('input', help="The input.png to convert")
