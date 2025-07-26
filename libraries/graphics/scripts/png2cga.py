@@ -1,3 +1,4 @@
+import argparse
 import os
 import sys
 
@@ -27,7 +28,7 @@ def nearest_match(color):
     raise ValueError(f"Unknown color {color}")
 
 
-def convert_bw_image_to_mode6(input_png, output_bin, interlaced=False):
+def convert_image_to_hga(input_png, output_bin, interlaced=False):
     img = Image.open(input_png).convert('1')
 
     if interlaced and img.size != (640, 400):
@@ -50,7 +51,7 @@ def convert_bw_image_to_mode6(input_png, output_bin, interlaced=False):
     print(f"Saved BW {'interlaced ' if interlaced else ''}image to {output_bin}")
 
 
-def convert_image_to_cga(input_png, output_bin):
+def convert_image_to_cga(input_png, output_bin, interlaced=False):
     img = Image.open(input_png)
     if img.size != (320, 200):
         raise ValueError("Image must be 320x200")
@@ -76,24 +77,41 @@ def convert_image_to_cga(input_png, output_bin):
 
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(
+        prog='PNG to CGA Image',
+        description='Convert PNGs to a CGA Image for the IBM PC JR.')
+
+    parser.add_argument('input', help="The input.png to convert")
+    parser.add_argument('output_dir', help="The output directory to spit out the CGA image")
+
+    args = parser.parse_args(sys.argv[1:])
+
     if len(sys.argv) < 3:
         print("Usage: png2cga.py input.png output/dir")
+        print("Valid file sizes and output:")
+        print("  320x200 : .cga")
+        print("  320x400 : .cgi")
+        print("  640x200 : .hga")
+        print("  640x400 : .hgi")
+        print("NOTE: file extension is automatically output based on file size")
         sys.exit(1)
 
-    input_path = sys.argv[1]
+    input_path = args.input
     raw_filepath, _ = os.path.splitext(input_path)
     filename = os.path.split(raw_filepath)[-1]
     img = Image.open(input_path)
 
-    cga_path = os.path.join(sys.argv[2], f"{filename}.cga")
-    hcga_path = os.path.join(sys.argv[2], f"{filename}.hcga")
+    cga_path = os.path.join(args.output_dir, f"{filename}.cga")
+    hga_path = os.path.join(args.output_dir, f"{filename}.hcga")
 
     match img.size:
         case (320, 200):
             convert_image_to_cga(input_path, cga_path)
+        case (320, 400):
+            convert_image_to_cga(input_path, cga_path, True)
         case (640, 400):
-            convert_bw_image_to_mode6(input_path, hcga_path, True)
+            convert_image_to_hga(input_path, hga_path, True)
         case (640, 200):
-            convert_bw_image_to_mode6(input_path, hcga_path, False)
+            convert_image_to_hga(input_path, hga_path, False)
         case _:
             raise ValueError(f"Invalid image size {img.size}")

@@ -27,6 +27,7 @@ namespace CGA {
             return None;
         }
 
+        // TODO: consolidate common behavior with CGA images
         for (uint8_t i = 0; i < sprite.length; i++) {
             uint8_t far *vram = (uint8_t far *)MK_FP(DOS::Video::VIDEO_MEMORY, (sprite.offsets[i] + x_offset));
             const uint8_t &mask = sprite.masks[i];

@@ -5,18 +5,16 @@ import glob
 import json
 import os
 import sys
+from typing import Any
 import imageio.v3 as iio
 from PIL import Image, ImageDraw
 from PIL.Image import Resampling
+from PIL.ImageFile import ImageFile
 import numpy as np
 
 
-DEFAULT_RADIUS = 3
 SCREEN_HEIGHT = 200
 SCREEN_WIDTH = 320
-
-GENERATE_VIDEO = True
-SPRITE_PIXEL_THRESHOLD = 20
 
 BLANK_COLORS = [
     (0, 255, 255, 100),
@@ -35,7 +33,7 @@ BLANK_COLORS = [
 __NCLR = 0
 
 
-def get_neighbors(x: int, y: int, radius: int = DEFAULT_RADIUS, update: set[tuple[int, int]] | None = None) -> set[tuple[int, int]]:
+def get_neighbors(x: int, y: int, radius: int, update: set[tuple[int, int]] | None = None) -> set[tuple[int, int]]:
     hood = set() if update is None else set(update)
 
     for py in range(max(y - radius, 0), min(y + radius + 1, SCREEN_HEIGHT)):
@@ -82,21 +80,32 @@ def next_blank_color():
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        prog='PNG to CGA Sprites',
-        description='Convert PNGs to CGA Sprites for the IBM PC JR')
+        prog='PNG to CGA Sprite Bank',
+        description='Convert a PNG to a CGA Sprite Bank for the IBM PC JR.',
+        epilog='NOTE: The PNG will be segmented into sprites based on color, there is no fuzzy search, the colors must be exactly the same to count as one sprite')
 
     parser.add_argument('input', help="The input.png to scrape for sprites")
     parser.add_argument('output_dir', help="The output directory to spit out PNGs and other artifacts")
-    parser.add_argument('-m', '--map_dir', help="A directory of PNGs to use for mapping, their names will be used in generating the json if they are a pixel perfect match. NOTE: it is advised to generate sprites without this option, rename them, and then regenerate")
+    parser.add_argument('-m', '--map_dir', help="A directory of PNGs to use for mapping, their names will be used in generating the json if they are a pixel perfect match. NOTE: it is advised to generate sprites without this option, rename them, move to a new dir, point this option to that dir, and then regenerate")
+    parser.add_argument(
+        '-r', '--radius', help="Pixel radius to use when searching for sprites. Larger radii will consider more pixel area as part of a single sprite.", default=3)
+    parser.add_argument(
+        '--video', help="Generate a video of the PNG scraping algorithm. Allows for debugging of sprite generation.", action='store_true')
+    parser.add_argument(
+        '-t', '--threshold', help="The pixel count threshold to count a group of pixels as a sprite. This prevents small artifacts / unintended pixels from generating too many sprites.", default=20)
 
     args = parser.parse_args(sys.argv[1:])
 
     input_path = args.input
     output_dir = args.output_dir
     map_dir = args.map_dir if args.map_dir and os.path.isdir(args.map_dir) else None
+    search_radius = args.radius
+    generate_video = args.video
+    sprite_pixel_threshold = args.threshold
+
     raw_filepath, _ = os.path.splitext(input_path)
     filename = os.path.split(raw_filepath)[-1]
-    img = Image.open(input_path)
+    img: ImageFile = Image.open(input_path)
 
     os.makedirs(sys.argv[2], exist_ok=True)
     out_path = os.path.join(sys.argv[2], "sprites.bin")
@@ -105,13 +114,13 @@ if __name__ == "__main__":
     if img.size != (SCREEN_WIDTH, SCREEN_HEIGHT):
         raise ValueError(f"Image must be {SCREEN_WIDTH}x{SCREEN_HEIGHT}")
 
-    pixels = img.load()
+    pixels: Any = img.load()
     sprites = set()
     dropped_sprites = 0
     process_imgs: list[Future] = []
 
     with ThreadPoolExecutor() as pool:
-        if GENERATE_VIDEO:
+        if generate_video:
             process_imgs.append(pool.submit(img_to_frame, img.copy()))
 
         for y in range(200):
@@ -119,29 +128,29 @@ if __name__ == "__main__":
                 pixel = pixels[x, y]
                 if pixel[3] > (255/2):
                     sprite = [(x, y)]
-                    to_visit = get_neighbors(x, y)
+                    to_visit = get_neighbors(x, y, radius=search_radius)
 
                     blank_color = next_blank_color()
                     pixels[x, y] = blank_color
 
-                    while (to_visit):
+                    while to_visit:
                         to_add = set()
 
                         for vx, vy in to_visit:
                             if pixels[vx, vy] == pixel:
-                                to_add.update(get_neighbors(vx, vy))
+                                to_add.update(get_neighbors(vx, vy, radius=search_radius))
                                 sprite.append((vx, vy))
                                 pixels[vx, vy] = blank_color
                             elif (pixels[vx, vy][3] <= (255/2)) and (pixels[vx, vy] not in BLANK_COLORS):
                                 pixels[vx, vy] = (0, 0, 0, 1)
 
                         to_visit = to_add
-                        if GENERATE_VIDEO:
+                        if generate_video:
                             process_imgs.append(pool.submit(img_to_frame, img.copy()))
 
-                    if len(sprite) < SPRITE_PIXEL_THRESHOLD:
+                    if len(sprite) < sprite_pixel_threshold:
                         dropped_sprites += 1
-                        if GENERATE_VIDEO:
+                        if generate_video:
                             for x, y in sprite:
                                 pixels[x, y] = (255, 0, 0, 100)
                             process_imgs.append(pool.submit(img_to_frame, img.copy()))
@@ -256,7 +265,7 @@ if __name__ == "__main__":
 
     print("Done encoding")
 
-    if GENERATE_VIDEO:
+    if generate_video:
         print("Generating Video")
         iio.imwrite(os.path.join(sys.argv[2], f"{filename}.mp4"), [np.array(f.result())
                     for f in process_imgs], fps=175, codec="libx264")
