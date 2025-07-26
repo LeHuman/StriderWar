@@ -59,7 +59,7 @@ No metadata is included in regards to what color palette to use. The addition of
 
 ### CGA Image
 
-CGA Images are meant to be streamed from a file straight to video memory, performing transparency if necessary. It is enough to simply read in the file and begin directly copying to video memory. The only prerequisite to this is to correctly set the video mode based on the file extension.
+CGA Images are meant to be streamed from a file straight to video memory, performing transparency if necessary. The only operation needed at runtime is to determine which bank (even or odd) to place a line in. Additionally, the correct video mode must be set based on the file extension.
 
 The distinction between types are only dictated by their file extension, the rendering program can choose to follow it / support different formats.
 
@@ -72,9 +72,9 @@ The distinction between types are only dictated by their file extension, the ren
 
 <img src="images/image.png" alt="Transparency" width="50%"/>
 
-*For illustrative purposes each line is not split into even and odd rows here, but the actual binary would be.*
-
 CGA Images contain no metadata in the actual binary. Because of this, the size of the image is based on the video mode. i.e. the image size matches the video mode size it corresponds to. Every byte on screen can / will be written to.
+
+It was chosen to offset the lines at runtime as the added metadata / file size was not worth the impact on runtime. CGA Images are not meant to be rendered continuously anyways. The larger bottleneck is streaming from the filesystem.
 
 ### CGA Sprite Bank
 

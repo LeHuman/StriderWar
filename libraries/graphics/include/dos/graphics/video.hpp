@@ -12,6 +12,7 @@ namespace Video {
     static const size_t MODE = _MRES4COLOR;
     static const size_t PALETTE = 2;
     static const size_t BYTES_PER_LINE = 80;
+    static const size_t BANK_OFFSET = 0x2000;
     static const size_t HEIGHT = 200;
     static const size_t WIDTH = 320;
 

@@ -99,7 +99,7 @@ namespace CGA {
         fclose(f);
 
         for (size_t i = 0; i < *sprite_bank.length; i++) {
-            load_sprite(i, (i % 3) + 1, NONE, 0);
+            load_sprite(i, 3, PERFECT, 0);
         }
 
         return code;
@@ -121,7 +121,7 @@ namespace CGA {
                 return File_Read_CGA_Data;
             }
 
-            const unsigned offset = (y / 2) * DOS::Video::BYTES_PER_LINE + (y % 2) * 0x2000;
+            const unsigned short offset = (y / 2) * DOS::Video::BYTES_PER_LINE + ((y % 2) * DOS::Video::BANK_OFFSET);
             uint8_t far *vram = (uint8_t far *)MK_FP(DOS::Video::VIDEO_MEMORY, offset);
             for (int i = 0; i < DOS::Video::BYTES_PER_LINE; ++i) {
                 const uint8_t &byte = line[i];
