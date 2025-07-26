@@ -80,7 +80,7 @@ def next_blank_color():
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        prog='PNG to CGA Sprite Bank',
+        prog=sys.argv[0] if len(sys.argv) >= 1 else "cga_sprite.py",
         description='Convert a PNG to a CGA Sprite Bank for the IBM PC JR.',
         epilog='NOTE: The PNG will be segmented into sprites based on color, there is no fuzzy search, the colors must be exactly the same to count as one sprite')
 

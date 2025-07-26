@@ -1,6 +1,7 @@
 import argparse
 import os
 import sys
+from typing import Any
 
 from PIL import Image
 
@@ -36,7 +37,7 @@ def convert_image_to_hga(input_png, output_bin, interlaced=False):
     if not interlaced and img.size != (640, 200):
         raise ValueError("Image must be 640x200")
 
-    pixels = img.load()
+    pixels: Any = img.load()
     generator = range(0, 400, 2) if interlaced else range(200)
 
     with open(output_bin, "wb") as f:
@@ -48,18 +49,22 @@ def convert_image_to_hga(input_png, output_bin, interlaced=False):
                         byte |= (1 << (7 - i))
                 f.write(bytes([byte]))
 
-    print(f"Saved BW {'interlaced ' if interlaced else ''}image to {output_bin}")
+    print(f"Saved HGA {'interlaced ' if interlaced else ''}image to {output_bin}")
 
 
 def convert_image_to_cga(input_png, output_bin, interlaced=False):
     img = Image.open(input_png)
-    if img.size != (320, 200):
+
+    if interlaced and img.size != (320, 400):
+        raise ValueError("Interlaced Image must be 320x400")
+    if not interlaced and img.size != (320, 200):
         raise ValueError("Image must be 320x200")
 
-    pixels = img.load()
+    pixels: Any = img.load()
+    generator = range(0, 400, 2) if interlaced else range(200)
 
     with open(output_bin, "wb") as f:
-        for y in range(200):
+        for y in generator:
             for x in range(0, 320, 4):
                 byte = 0
                 for i in range(4):
@@ -73,45 +78,45 @@ def convert_image_to_cga(input_png, output_bin, interlaced=False):
                     byte |= (index & 0x03) << (6 - 2 * i)
                 f.write(bytes([byte]))
 
-    print(f"Saved CGA image to {output_bin}")
+    print(f"Saved CGA {'interlaced ' if interlaced else ''}image to {output_bin}")
 
+
+VALID_FILE_SIZES_STR = """
+Valid file sizes and output:
+    320x200 : .cga
+    320x400 : .cgi
+    640x200 : .hga
+    640x400 : .hgi
+"""
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        prog='PNG to CGA Image',
-        description='Convert PNGs to a CGA Image for the IBM PC JR.')
+        prog=sys.argv[0] if len(sys.argv) >= 1 else "png2cga.py",
+        description='Convert PNGs to a CGA Image for the IBM PC JR.',
+        epilog=f'NOTE: file extension is automatically output based on file size.\n{VALID_FILE_SIZES_STR}',
+        formatter_class=argparse.RawDescriptionHelpFormatter)
 
     parser.add_argument('input', help="The input.png to convert")
     parser.add_argument('output_dir', help="The output directory to spit out the CGA image")
 
     args = parser.parse_args(sys.argv[1:])
 
-    if len(sys.argv) < 3:
-        print("Usage: png2cga.py input.png output/dir")
-        print("Valid file sizes and output:")
-        print("  320x200 : .cga")
-        print("  320x400 : .cgi")
-        print("  640x200 : .hga")
-        print("  640x400 : .hgi")
-        print("NOTE: file extension is automatically output based on file size")
-        sys.exit(1)
-
     input_path = args.input
     raw_filepath, _ = os.path.splitext(input_path)
     filename = os.path.split(raw_filepath)[-1]
-    img = Image.open(input_path)
+    image = Image.open(input_path)
 
     cga_path = os.path.join(args.output_dir, f"{filename}.cga")
     hga_path = os.path.join(args.output_dir, f"{filename}.hcga")
 
-    match img.size:
+    match image.size:
         case (320, 200):
-            convert_image_to_cga(input_path, cga_path)
+            convert_image_to_cga(input_path, cga_path, False)
         case (320, 400):
             convert_image_to_cga(input_path, cga_path, True)
-        case (640, 400):
-            convert_image_to_hga(input_path, hga_path, True)
         case (640, 200):
             convert_image_to_hga(input_path, hga_path, False)
+        case (640, 400):
+            convert_image_to_hga(input_path, hga_path, True)
         case _:
-            raise ValueError(f"Invalid image size {img.size}")
+            raise ValueError(f"Invalid image size {image.size}")
