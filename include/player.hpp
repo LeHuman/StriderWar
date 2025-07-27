@@ -93,10 +93,10 @@ struct Player {
     Bullet bullets[MAX_BULLETS];
     size_t enabled_bullets;
     size_t bullet_delay;
-    situation_t &situation;
     static const size_t MAX_SITUATIONS = sizeof(situation_t) / sizeof(status);
     size_t situation_cycle;
     size_t meltdown_cycle;
+    situation_t *situation;
 
     bool last_bullet;
     bool req_bullet;
@@ -104,9 +104,9 @@ struct Player {
     int bounced;
     DOS::Draw::Line spark;
 
-    const DOS::Input::Interface &input;
+    DOS::Input::Interface *input;
 
-    Player(DOS::Input::Interface &input, situation_t &situation_mem);
+    Player(DOS::Input::Interface *input, situation_t *situation_mem);
 
     inline bool valid() {
         return id != -1;
@@ -117,64 +117,64 @@ struct Player {
     void step_situation() {
         switch (situation_cycle++ % 20) { // MAX_SITUATIONS?
             case 0:
-                situation.ship.pilot.set(ship.condition.cockpit);
+                situation->ship.pilot.set(ship.condition.cockpit);
                 break;
             case 1:
-                situation.ship.body.set(ship.condition.body);
+                situation->ship.body.set(ship.condition.body);
                 break;
             case 2:
-                situation.ship.thruster.left.set(ship.condition.thruster.left);
+                situation->ship.thruster.left.set(ship.condition.thruster.left);
                 break;
             case 3:
-                situation.ship.thruster.right.set(ship.condition.thruster.right);
+                situation->ship.thruster.right.set(ship.condition.thruster.right);
                 break;
             case 4:
-                situation.bullet[0].head.set(bullets[0].condition.payload);
+                situation->bullet[0].head.set(bullets[0].condition.payload);
                 break;
             case 5:
-                situation.bullet[0].body.set(bullets[0].condition.body);
+                situation->bullet[0].body.set(bullets[0].condition.body);
                 break;
             case 6:
-                situation.bullet[0].boost.set(bullets[0].condition.booster);
+                situation->bullet[0].boost.set(bullets[0].condition.booster);
                 break;
             case 7:
-                situation.bullet[1].head.set(bullets[1].condition.payload);
+                situation->bullet[1].head.set(bullets[1].condition.payload);
                 break;
             case 8:
-                situation.bullet[1].body.set(bullets[1].condition.body);
+                situation->bullet[1].body.set(bullets[1].condition.body);
                 break;
             case 9:
-                situation.bullet[1].boost.set(bullets[1].condition.booster);
+                situation->bullet[1].boost.set(bullets[1].condition.booster);
                 break;
             case 10:
-                situation.panel.ammo_low.set(Condition::disable_high((Condition::T)((bullets[0].condition.payload + bullets[1].condition.payload + 1) / 2)));
+                situation->panel.ammo_low.set(Condition::disable_high((Condition::T)((bullets[0].condition.payload + bullets[1].condition.payload + 1) / 2)));
                 break;
             case 11:
-                situation.panel.auto_pilot.set(ship.auto_pilot_forced() ? P_SS_FAIL : P_SS_OFF);
+                situation->panel.auto_pilot.set(ship.auto_pilot_forced() ? P_SS_FAIL : P_SS_OFF);
                 break;
             case 12:
-                situation.panel.booster_damage.set(Condition::disable_high((Condition::T)((bullets[0].condition.booster + bullets[1].condition.booster + 1) / 2)));
+                situation->panel.booster_damage.set(Condition::disable_high((Condition::T)((bullets[0].condition.booster + bullets[1].condition.booster + 1) / 2)));
                 break;
             case 13:
-                situation.panel.dead.set(ship.is_disabled() ? P_SS_FAIL : P_SS_OFF);
+                situation->panel.dead.set(ship.is_disabled() ? P_SS_FAIL : P_SS_OFF);
                 break;
             case 14:
-                situation.panel.fire.set(ship.inferno ? (ship.inferno > (ship.MAX_INFERNO / 2) ? P_SS_FAIL : P_SS_FAIR) : P_SS_OFF);
+                situation->panel.fire.set(ship.inferno ? (ship.inferno > (ship.MAX_INFERNO / 2) ? P_SS_FAIL : P_SS_FAIR) : P_SS_OFF);
                 break;
             case 15:
-                situation.panel.fuel_low.set(Condition::disable_high((Condition::T)((bullets[0].condition.body + bullets[1].condition.body + 1) / 2)));
+                situation->panel.fuel_low.set(Condition::disable_high((Condition::T)((bullets[0].condition.body + bullets[1].condition.body + 1) / 2)));
                 break;
             case 16:
-                situation.panel.hull_breach.set(ship.pressure < (ship.MAX_PRESSURE / 3) ? P_SS_FAIL : (ship.pressure < ((ship.MAX_PRESSURE * 2) / 3) ? P_SS_FAIR : (ship.pressure == ship.MAX_PRESSURE ? P_SS_OFF : P_SS_GOOD)));
+                situation->panel.hull_breach.set(ship.pressure < (ship.MAX_PRESSURE / 3) ? P_SS_FAIL : (ship.pressure < ((ship.MAX_PRESSURE * 2) / 3) ? P_SS_FAIR : (ship.pressure == ship.MAX_PRESSURE ? P_SS_OFF : P_SS_GOOD)));
                 break;
             case 17:
-                situation.panel.left_authority.set(ship.condition.thruster.left);
+                situation->panel.left_authority.set(ship.condition.thruster.left);
                 break;
             case 18:
-                situation.panel.right_authority.set(ship.condition.thruster.right);
+                situation->panel.right_authority.set(ship.condition.thruster.right);
                 break;
             case 19:
-                situation.panel.nuclear_meltdown.set(meltdown_cycle > ((MAX_MELTDOWN_CYCLES * 2) / 3) ? P_SS_FAIL : (meltdown_cycle > (MAX_MELTDOWN_CYCLES / 3) ? P_SS_FAIR : (meltdown_cycle == 0 ? P_SS_OFF : P_SS_GOOD)));
+                situation->panel.nuclear_meltdown.set(meltdown_cycle > ((MAX_MELTDOWN_CYCLES * 2) / 3) ? P_SS_FAIL : (meltdown_cycle > (MAX_MELTDOWN_CYCLES / 3) ? P_SS_FAIR : (meltdown_cycle == 0 ? P_SS_OFF : P_SS_GOOD)));
                 break;
             // TODO: Update remaining situations
             default:

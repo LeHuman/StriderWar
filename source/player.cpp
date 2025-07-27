@@ -10,7 +10,7 @@ using namespace math;
 
 bool player_situation_update = true;
 
-Player::Player(DOS::Input::Interface &input, situation_t &situation_mem) : id(-1), damage_queue(0), enabled_bullets(0), input(input), last_bullet(false), req_bullet(false), bounced(0), situation(situation_mem), situation_cycle(0), meltdown_cycle(0) {
+Player::Player(DOS::Input::Interface *input, situation_t *situation_mem) : id(-1), damage_queue(0), enabled_bullets(0), input(input), last_bullet(false), req_bullet(false), bounced(0), situation(situation_mem), situation_cycle(0), meltdown_cycle(0) {
     ship.entity.x = world::X_CENTER;
     ship.entity.y = world::Y_CENTER;
     ship.entity.enabled = true;
@@ -83,12 +83,12 @@ void Player::step() {
     step_damage();
 
     // IMPROVE: Actually base thrust boost on orientation?
-    Fixed ix = (Fixed)(input.x) / Fixed(300 - ship.mult.left_turn);
-    Fixed iy = (Fixed)(input.y) / Fixed(300 - ship.mult.right_turn);
+    Fixed ix = (Fixed)(input->x) / Fixed(300 - ship.mult.left_turn);
+    Fixed iy = (Fixed)(input->y) / Fixed(300 - ship.mult.right_turn);
 
     ship.entity.pulse(ix, iy);
 
-    req_bullet = input.fire;
+    req_bullet = input->fire;
 
     ship.entity.step();
 
@@ -108,7 +108,7 @@ void Player::step() {
 
     bool fire = false;
     bool at_fire_speed = ((ship.entity.vx * ship.entity.vx) + (ship.entity.vy * ship.entity.vy)) > bullet_vel_cmp;
-    situation.panel.low_speed.set(at_fire_speed ? P_SS_OFF : P_SS_FAIR);
+    situation->panel.low_speed.set(at_fire_speed ? P_SS_OFF : P_SS_FAIR);
 
     if (at_fire_speed && (req_bullet != last_bullet)) {
         fire = req_bullet;
@@ -121,12 +121,12 @@ void Player::step() {
         Bullet &bullet = bullets[i];
 
         if (!bullet.entity.enabled && bullet.is_disabled()) {
-            situation.bullet[i].indicator.set(P_SS_FAIL);
+            situation->bullet[i].indicator.set(P_SS_FAIL);
             disabled++;
             continue;
         }
 
-        if (input.alt && bullet.entity.enabled) {
+        if (input->alt && bullet.entity.enabled) {
             bullet.entity.bounce.x = true;
         } else if (fire && !bullet.entity.enabled && bullet.loaded) {
             fire = false;
@@ -152,18 +152,18 @@ void Player::step() {
             world::explode(bullet);
         }
 
-        situation.bullet[i].indicator.set((bullet.loaded && !bullet.entity.enabled) ? P_SS_GOOD : P_SS_FAIR);
+        situation->bullet[i].indicator.set((bullet.loaded && !bullet.entity.enabled) ? P_SS_GOOD : P_SS_FAIR);
     }
 
     if (disabled >= MAX_BULLETS) {
-        situation.panel.gun_ready.set(P_SS_FAIL);
+        situation->panel.gun_ready.set(P_SS_FAIL);
     } else {
         bool loaded = false;
         for (size_t i = 0; i < MAX_BULLETS; i++) {
             bullets[i].entity.set_priority(enabled_bullets + 1);
             loaded |= bullets[i].loaded;
         }
-        situation.panel.gun_ready.set(loaded ? P_SS_GOOD : P_SS_FAIR);
+        situation->panel.gun_ready.set(loaded ? P_SS_GOOD : P_SS_FAIR);
     }
 
     step_situation();
