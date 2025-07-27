@@ -16,6 +16,8 @@ namespace Input {
         State playerB;
         bool exit_requested = false;
         bool save_requested = false;
+        bool bot_requested = false;
+        bool reset_requested = false;
         void interrupt (*old_isr)();
 
         void interrupt new_isr() {
@@ -36,14 +38,12 @@ namespace Input {
                 case 0x20:
                     playerA.right = !is_release;
                     break;
-
                 case 0x39:
                     playerA.fire = !is_release;
                     break;
                 case 0x1D:
                     playerA.alt = !is_release;
                     break;
-
                 case 0x17:
                     playerB.up = !is_release;
                     break;
@@ -68,6 +68,12 @@ namespace Input {
                     break;
                 case 0x15: // Y
                     save_requested = !is_release;
+                    break;
+                case 0x13: // R
+                    reset_requested = !is_release;
+                    break;
+                case 0x30: // B
+                    bot_requested = !is_release;
                     break;
                 default:
                     break;

@@ -46,11 +46,9 @@ struct Bullet {
         mult.damage = condition.payload + 1;
     }
 
-    Bullet() : loaded(true), delay(MAX_DELAY) {
-        condition.payload = Condition::HIGH;
-        condition.body = Condition::HIGH;
-        condition.booster = Condition::HIGH;
+    void reset();
 
-        step_damage();
+    Bullet() : loaded(true), delay(MAX_DELAY) {
+        reset();
     }
 };

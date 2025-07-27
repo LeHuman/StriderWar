@@ -32,6 +32,8 @@ namespace Input {
         extern State playerB;
         extern bool exit_requested;
         extern bool save_requested;
+        extern bool reset_requested;
+        extern bool bot_requested;
 
         void interrupt new_isr();
 
@@ -40,6 +42,8 @@ namespace Input {
             playerB = State();
             exit_requested = false;
             save_requested = false;
+            reset_requested = false;
+            bot_requested = false;
             old_isr = _dos_getvect(0x09); // Backup original ISR
             _dos_setvect(0x09, new_isr);  // Set our custom handler
         }

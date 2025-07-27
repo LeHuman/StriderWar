@@ -100,13 +100,18 @@ struct Player {
 
     bool last_bullet;
     bool req_bullet;
-
     int bounced;
-    DOS::Draw::Line spark;
 
+    DOS::Draw::Line spark;
     DOS::Input::Interface *input;
 
     Player(DOS::Input::Interface *input, situation_t *situation_mem);
+
+    void reset();
+
+    inline void set_input(DOS::Input::Interface *input) {
+        this->input = input;
+    }
 
     inline bool valid() {
         return id != -1;
@@ -166,6 +171,7 @@ struct Player {
                 break;
             case 16:
                 situation->panel.hull_breach.set(ship.pressure < (ship.MAX_PRESSURE / 3) ? P_SS_FAIL : (ship.pressure < ((ship.MAX_PRESSURE * 2) / 3) ? P_SS_FAIR : (ship.pressure == ship.MAX_PRESSURE ? P_SS_OFF : P_SS_GOOD)));
+                debug::serial_printf("pressure:%i", ship.pressure);
                 break;
             case 17:
                 situation->panel.left_authority.set(ship.condition.thruster.left);

@@ -23,6 +23,7 @@ int add_player(Player &player) {
         id = current_players;
         player.id = current_players;
         players[current_players++] = &player;
+        player.reset();
     }
 
     return id;

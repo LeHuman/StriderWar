@@ -63,12 +63,22 @@ struct Ship {
 
     void step_damage();
 
-    Ship() : breach(false), pressure(MAX_PRESSURE), inferno(0), update_cycle(0) {
+    inline void reset() {
         condition.cockpit = Condition::HIGH;
         condition.body = Condition::HIGH;
         condition.thruster.left = Condition::HIGH;
         condition.thruster.right = Condition::HIGH;
 
+        breach = false;
+        pressure = MAX_PRESSURE;
+        inferno = 0;
+        lost_cycles = 0;
+        update_cycle = 0;
+
         step_damage();
+    }
+
+    Ship() {
+        reset();
     }
 };

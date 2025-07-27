@@ -10,16 +10,36 @@ using namespace math;
 
 bool player_situation_update = true;
 
-Player::Player(DOS::Input::Interface *input, situation_t *situation_mem) : id(-1), damage_queue(0), enabled_bullets(0), input(input), last_bullet(false), req_bullet(false), bounced(0), situation(situation_mem), situation_cycle(0), meltdown_cycle(0) {
+Player::Player(DOS::Input::Interface *input, situation_t *situation_mem) : input(input), situation(situation_mem) {
+    id = -1;
+    reset();
+}
+
+void Player::reset() {
+    damage_queue = 0;
+    enabled_bullets = 0;
+    last_bullet = false;
+    req_bullet = false;
+    bounced = 0;
+    situation_cycle = 0;
+    meltdown_cycle = 0;
+
+    // TODO: Move this reset logic to entity
     ship.entity.x = world::X_CENTER;
     ship.entity.y = world::Y_CENTER;
+    ship.entity.vx = 0;
+    ship.entity.vy = 0;
     ship.entity.enabled = true;
     ship.entity.has_physics = true;
     ship.entity.color = 1;
 
+    ship.reset();
+    
+
     for (size_t i = 0; i < MAX_BULLETS; i++) {
         bullets[i].entity.color = 3;
         bullets[i].entity.set_priority(1);
+        bullets[i].reset();
     }
 
     blast_field[6] = &ship.condition.cockpit;

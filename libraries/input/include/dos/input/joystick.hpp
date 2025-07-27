@@ -64,6 +64,44 @@ namespace Input {
             playerB = State();
         }
 
+        inline bool load_calibration(const char *calibration_file) {
+            FILE *f = fopen(calibration_file, "rb");
+            if (f) {
+                uint8_t *dataA = (uint8_t *)&playerA.cal;
+                uint8_t *dataB = (uint8_t *)&playerB.cal;
+                const size_t data_size = sizeof(playerA.cal);
+                size_t read = fread(dataA, 1, data_size, f);
+                read += fread(dataB, 1, data_size, f);
+                fclose(f);
+                return read == (data_size * 2);
+            }
+            // debug::serial_printf("Could not open %s\n", calibration_file);
+            return false;
+        }
+
+        inline bool save_calibration(const char *calibration_file) {
+            const uint8_t *dataA = (uint8_t *)&playerA.cal;
+            const uint8_t *dataB = (uint8_t *)&playerB.cal;
+            const size_t data_size = sizeof(playerA.cal);
+
+            FILE *f = fopen(calibration_file, "wb");
+            if (!f) {
+                // debug::serial_printf("Could not open %s\n", calibration_file);
+                return false;
+            }
+
+            size_t written = fwrite(dataA, 1, data_size, f);
+            written += fwrite(dataB, 1, data_size, f);
+            if (written != (data_size * 2)) {
+                // debug::serial_printf("File write failed for %s\n", calibration_file);
+                fclose(f);
+                return false;
+            }
+
+            fclose(f);
+            return true;
+        }
+
         inline void update() {
             playerA.rawX = 0;
             playerA.rawY = 0;

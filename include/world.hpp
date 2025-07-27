@@ -37,6 +37,13 @@ static const size_t MAX_EXPLOSIONS = 8;
 extern size_t current_players;
 extern Player *players[MAX_PLAYERS];
 
+inline void clear_players() {
+    for (size_t i = 0; i < world::current_players; i++) {
+        players[i]->id = -1;
+    }
+    current_players = 0;
+}
+
 int add_player(Player &player);
 
 inline bool check_bullet(const Bullet &bullet, const Player *player) {
@@ -53,9 +60,15 @@ inline bool check_bullet(const Bullet &bullet, const Player *player) {
     return ((dx * dx) + (dy * dy)) < (blast_radius * blast_radius / 2);
 }
 
+inline void step() {
+    for (size_t i = 0; i < current_players; i++) {
+        players[i]->step();
+    }
+}
+
 inline void draw() {
-    for (size_t i = 0; i < world::current_players; i++) {
-        world::players[i]->draw();
+    for (size_t i = 0; i < current_players; i++) {
+        players[i]->draw();
     }
 }
 

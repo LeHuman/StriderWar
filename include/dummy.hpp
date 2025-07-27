@@ -16,6 +16,7 @@ struct Dummy : DOS::Input::Interface {
     void set_player(Player *player) {
         this->player = player;
     }
+
     void set_target(Player *player) {
         this->target = player;
     }

@@ -262,27 +262,16 @@ int main() {
     DOS::Input::Joystick::initialize(false);
 #endif
 
-    DOS::Input::Keyboard::initialize();
-
-    Player playerA(&DOS::Input::Keyboard::playerA, &sit_mem_A);
-
-    dummy::Dummy inputB;
-    Player playerB(&inputB, &sit_mem_B);
-    inputB.set_target(&playerA);
-    inputB.set_player(&playerB);
-
-    FILE *f
-        = fopen("joystick.cal", "rb");
-    if (f) {
-        uint8_t *dataA = (uint8_t *)&DOS::Input::Joystick::playerA.cal;
-        uint8_t *dataB = (uint8_t *)&DOS::Input::Joystick::playerB.cal;
-        const size_t data_size = sizeof(DOS::Input::Joystick::playerA.cal);
-        fread(dataA, 1, data_size, f);
-        fread(dataB, 1, data_size, f);
-        fclose(f);
+    if (DOS::Input::Joystick::load_calibration("joystick.cal")) {
         DOS::Draw::text(10, 10, "Joystick Cal Loaded", 3);
         DOS::Draw::text(10, 10, "Joystick Cal Loaded", 0);
     }
+
+    DOS::Input::Keyboard::initialize();
+
+    dummy::Dummy autopilot;
+    Player playerA(nullptr, &sit_mem_A);
+    Player playerB(nullptr, &sit_mem_B);
 
     DOS::CGA::display_cga("frame.cga", DOS::CGA::SEMI);
     DOS::CGA::display_cga("title.cga", DOS::CGA::SEMI);
@@ -291,12 +280,14 @@ int main() {
     DOS::Sound::silence();
     temp_play_start_tune();
 
-    bool run = true;
-    while (run) {
+    bool enable_joystick = false;
+    bool enable_keyboard = false;
+
+    while (true) {
         if (DOS::Input::Keyboard::exit_requested) {
-            run = false;
             break;
         }
+
         if (DOS::Input::Keyboard::save_requested) {
             const uint8_t *dataA = (uint8_t *)&DOS::Input::Joystick::playerA.cal;
             const uint8_t *dataB = (uint8_t *)&DOS::Input::Joystick::playerB.cal;
@@ -319,34 +310,90 @@ int main() {
             fclose(f);
         }
 
+        bool a_valid = playerA.valid();
+        bool b_valid = playerB.valid();
+
+        if (DOS::Input::Keyboard::bot_requested) {
+            if (a_valid && !b_valid) {
+                playerB.set_input(&autopilot);
+                autopilot.set_player(&playerB);
+                autopilot.set_target(&playerA);
+                if (world::add_player(playerB) > -1) {
+                    b_valid = true;
+                    temp_play_B_join();
+                }
+            } else if (b_valid && !a_valid) {
+                playerA.set_input(&autopilot);
+                autopilot.set_player(&playerA);
+                autopilot.set_target(&playerB);
+                if (world::add_player(playerA) > -1) {
+                    a_valid = true;
+                    temp_play_A_join();
+                }
+            }
+        }
+
+        if (DOS::Input::Keyboard::reset_requested) {
+            bool enable_joystick = false;
+            bool enable_keyboard = false;
+            playerA.set_input(nullptr);
+            playerB.set_input(nullptr);
+            autopilot.set_player(nullptr);
+            autopilot.set_target(nullptr);
+            world::clear_players();
+            clear_screen();
+        }
+
         static const size_t max = 4;
         static size_t i = 0;
         if (i++ % max == 0) {
-            inputB.update();
+            autopilot.update();
         }
 
-        DOS::Input::Joystick::update();
-        DOS::Input::Keyboard::update();
-
-        if (!playerA.valid() && (DOS::Input::Joystick::playerA.fire || DOS::Input::Keyboard::playerA.fire)) {
-            temp_play_A_join();
-            clear_screen();
-            world::add_player(playerA);
+        if (enable_joystick || !enable_keyboard) {
+            DOS::Input::Joystick::update();
         }
 
-        if (!playerB.valid() && (DOS::Input::Joystick::playerB.fire || DOS::Input::Keyboard::playerB.fire)) {
-            temp_play_B_join();
-            clear_screen();
-            world::add_player(playerB);
+        if (enable_keyboard) {
+            DOS::Input::Keyboard::update();
         }
 
-        for (size_t i = 0; i < world::current_players; i++) {
-            world::players[i]->step();
+        if (!a_valid) {
+            if (DOS::Input::Joystick::playerA.fire) {
+                playerA.set_input(&DOS::Input::Joystick::playerA);
+                enable_joystick = true;
+            } else if (DOS::Input::Keyboard::playerA.fire) {
+                playerA.set_input(&DOS::Input::Keyboard::playerA);
+                enable_keyboard = true;
+            }
+
+            if (playerA.input != nullptr) {
+                temp_play_A_join();
+                clear_screen();
+                world::add_player(playerA);
+            }
+        }
+
+        if (!b_valid) {
+            if (DOS::Input::Joystick::playerB.fire) {
+                playerB.set_input(&DOS::Input::Joystick::playerB);
+                enable_joystick = true;
+            } else if (DOS::Input::Keyboard::playerB.fire) {
+                playerB.set_input(&DOS::Input::Keyboard::playerB);
+                enable_keyboard = true;
+            }
+
+            if (playerB.input != nullptr) {
+                temp_play_B_join();
+                clear_screen();
+                world::add_player(playerB);
+            }
         }
 
         temp_handle_sound(playerA, playerB);
         temp_set_sprites(playerA, playerB);
 
+        world::step();
         world::draw();
 
         if (world::current_players == 0) {
