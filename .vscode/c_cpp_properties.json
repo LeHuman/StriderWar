@@ -16,7 +16,8 @@
                 "_M_I86",
                 "__DOS__",
                 "__MEDIUM__",
-                "far="
+                "far=",
+                "DEBUG_ENABLE_FUNCTIONS"
             ],
             "cStandard": "c89",
             "cppStandard": "c++98",

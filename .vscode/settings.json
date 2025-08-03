@@ -68,7 +68,10 @@
         "xhash": "cpp",
         "xlocinfo": "cpp",
         "string": "cpp",
-        "xiosbase": "cpp"
+        "xiosbase": "cpp",
+        "corecrt_math_defines.h": "c",
+        "corecrt_math.h": "c",
+        "stddef.h": "c"
     },
     "sonarlint.pathToCompileCommands": "${workspaceFolder}\\build\\compile_commands.json"
 }

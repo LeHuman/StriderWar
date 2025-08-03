@@ -171,7 +171,6 @@ struct Player {
                 break;
             case 16:
                 situation->panel.hull_breach.set(ship.pressure < (ship.MAX_PRESSURE / 3) ? P_SS_FAIL : (ship.pressure < ((ship.MAX_PRESSURE * 2) / 3) ? P_SS_FAIR : (ship.pressure == ship.MAX_PRESSURE ? P_SS_OFF : P_SS_GOOD)));
-                debug::serial_printf("pressure:%i", ship.pressure);
                 break;
             case 17:
                 situation->panel.left_authority.set(ship.condition.thruster.left);
