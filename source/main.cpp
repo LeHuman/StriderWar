@@ -7,8 +7,11 @@
 #include <dos/sound.hpp>
 #include <graph.h>
 #include <i86.h>
+#include <math.h>
 #include <process.h>
+#include <song_data.hpp>
 #include <stdio.h>
+#include <time.hpp>
 
 #include "debug.hpp"
 #include "dummy.hpp"
@@ -22,6 +25,106 @@ static uint16_t sound_blap = 0;
 static uint16_t sound_crrsh = 0;
 static uint16_t sound_freq = 0;
 static bool silent = false;
+
+volatile size_t tick = 0;
+const size_t temp_sound_hertz_x10 = 31;
+volatile int note = 0;
+volatile int vol = 0;
+
+struct PSGSong {
+    const uint8_t *data;
+    const uint16_t *rle;
+
+    const size_t length;
+    const size_t rle_length;
+    const bool has_rle;
+
+    struct Wait {
+        uint16_t cycles;
+        uint16_t index;
+        Wait(uint16_t cycles, uint16_t index) : cycles(cycles), index(index) {}
+    } wait;
+
+    uint16_t current_index;
+    uint16_t rle_index;
+
+    PSGSong(
+        const uint8_t *data,
+        const uint16_t *rle,
+        const size_t &length,
+        const size_t &rle_length) : data(data), rle(rle), length(length), rle_length(rle_length), has_rle(rle_length > 0), wait(0, 0), current_index(0), rle_index(0) {
+        reset();
+    }
+
+    void reset() {
+        current_index = 0;
+        rle_index = 0;
+
+        if (has_rle) {
+            wait.cycles = rle[rle_index] & 0xF;
+            wait.index = rle[rle_index] >> 4;
+        }
+    }
+
+    void step() {
+        if ((current_index == wait.index)) {
+            if (wait.cycles > 0) {
+                --wait.cycles;
+                return;
+            } else if (has_rle) {
+                ++rle_index;
+                rle_index %= rle_length;
+                wait.cycles = rle[rle_index] & 0xF;
+                wait.index = rle[rle_index] >> 4;
+            }
+        }
+        outp(0xC0, data[current_index]);
+        outp(0xC0, data[current_index + 1]);
+        outp(0xC0, data[current_index + 2]);
+        current_index += 3;
+        current_index %= length;
+
+        if (current_index == 0) {
+            reset();
+        }
+    }
+};
+
+PSGSong pattern0(SongData::Pattern0::data, SongData::Pattern0::rle, SongData::Pattern0::LEN, SongData::Pattern0::RLE_LEN);
+PSGSong pattern1(SongData::Pattern1::data, SongData::Pattern1::rle, SongData::Pattern1::LEN, SongData::Pattern1::RLE_LEN);
+PSGSong pattern2(SongData::Pattern2::data, SongData::Pattern2::rle, SongData::Pattern2::LEN, SongData::Pattern2::RLE_LEN);
+
+bool swap = true;
+size_t note_count = 0;
+size_t swap_count = 0;
+
+void interrupt temp_sound() {
+    if ((tick % 5) == 0) {
+        if (swap) {
+            pattern0.step();
+        } else {
+            pattern1.step();
+        }
+
+        pattern2.step();
+
+        ++note_count;
+
+        if ((note_count % 32) == 0) {
+            swap = !swap;
+            ++swap_count;
+            pattern0.reset();
+            pattern1.reset();
+        }
+
+        if ((note_count % 64) == 0) {
+            pattern2.reset();
+        }
+    }
+
+    ++tick;
+    outp(0x20, 0x20);
+}
 
 inline void temp_handle_sound(Player &playerA, Player &playerB) {
     if ((playerA.enabled_bullets + playerB.enabled_bullets) != total_bullets) {
@@ -76,77 +179,6 @@ inline void temp_handle_sound(Player &playerA, Player &playerB) {
     }
 }
 
-inline void temp_play_start_tune() {
-    DOS::Sound::play(775, 10, 650, 10, 200, 3, 2, 8, 200);
-    delay(100);
-    DOS::Sound::play(775, 10, 650, 0, 200, 3, 2, 0, 200);
-    delay(50);
-    DOS::Sound::play(500, 9, 600, 10, 200, 3, 2, 5, 100);
-    delay(100);
-    DOS::Sound::play(0, 0, 0, 0, 0, 0, 0, 0, 0);
-    DOS::Sound::silence();
-}
-
-inline void temp_play_A_join() {
-    sound(784);
-    delay(30);
-
-    nosound();
-    delay(70);
-
-    sound(784);
-    delay(60);
-
-    nosound();
-    delay(100);
-
-    sound(784);
-    delay(100);
-
-    nosound();
-    delay(100);
-
-    sound(698);
-    delay(70);
-
-    nosound();
-    delay(180);
-
-    sound(784);
-    delay(100);
-    nosound();
-}
-
-inline void temp_play_B_join() {
-    sound(1047);
-    delay(30);
-
-    nosound();
-    delay(70);
-
-    sound(1047);
-    delay(60);
-
-    nosound();
-    delay(100);
-
-    sound(784);
-    delay(100);
-
-    nosound();
-    delay(100);
-
-    sound(698);
-    delay(70);
-
-    nosound();
-    delay(180);
-
-    sound(784);
-    delay(100);
-    nosound();
-}
-
 void temp_set_sprite(Player::status &status, size_t sprite_id) {
     uint8_t color = 0;
 
@@ -170,7 +202,6 @@ void temp_set_sprite(Player::status &status, size_t sprite_id) {
     status.acknowledge();
 
     DOS::CGA::load_sprite(sprite_id, color, DOS::CGA::PERFECT, 0);
-    debug::serial_print("s");
 }
 
 inline void temp_player_sprite_handle_a(Player &player) {
@@ -278,10 +309,11 @@ int main() {
     DOS::CGA::load_sprites("sprites.bin");
 
     DOS::Sound::silence();
-    temp_play_start_tune();
 
     bool enable_joystick = false;
     bool enable_keyboard = false;
+
+    Time::ISR::initialize(temp_sound, temp_sound_hertz_x10);
 
     while (true) {
         if (DOS::Input::Keyboard::exit_requested) {
@@ -320,7 +352,6 @@ int main() {
                 autopilot.set_target(&playerA);
                 if (world::add_player(playerB) > -1) {
                     b_valid = true;
-                    temp_play_B_join();
                 }
             } else if (b_valid && !a_valid) {
                 playerA.set_input(&autopilot);
@@ -328,7 +359,6 @@ int main() {
                 autopilot.set_target(&playerB);
                 if (world::add_player(playerA) > -1) {
                     a_valid = true;
-                    temp_play_A_join();
                 }
             }
         }
@@ -368,7 +398,6 @@ int main() {
             }
 
             if (playerA.input != nullptr) {
-                temp_play_A_join();
                 clear_screen();
                 world::add_player(playerA);
             }
@@ -384,12 +413,12 @@ int main() {
             }
 
             if (playerB.input != nullptr) {
-                temp_play_B_join();
                 clear_screen();
                 world::add_player(playerB);
             }
         }
 
+        // FIXME: Not working on hardware?
         temp_handle_sound(playerA, playerB);
         temp_set_sprites(playerA, playerB);
 
@@ -402,7 +431,8 @@ int main() {
         }
     }
 
-    DOS::Sound::silence();
+    Time::ISR::shutdown();
     DOS::Input::Keyboard::shutdown();
+    DOS::Sound::silence();
     return 0;
 }

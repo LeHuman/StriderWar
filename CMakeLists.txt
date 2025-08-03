@@ -6,7 +6,8 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # Specify the target system as DOS
 set(CMAKE_SYSTEM_NAME DOS)
-set(DOSBOX_DEBUG OFF)
+# TODO: Build both versions
+set(DOSBOX_DEBUG ON)
 
 # -bt=dos : Compile for DOS
 # -mm : Medium Memory model
@@ -21,7 +22,7 @@ set(DOSBOX_DEBUG OFF)
 # -zp8 : struct packing align 8
 # -fpi87 : fpi87 inline 80x87
 # -wcd=628 : Ignore "expression is not meaningful" for compiled out functions
-add_compile_options(-bt=dos -mm -0 -d0 -zq -fr=nul -xd -onasx -s -oh -ei -zp8 -fpi87 -wcd=628) #-oi+
+add_compile_options(-bt=dos -mm -0 -d0 -zq -fr=nul -xd -onasx -s -oi+ -oh -ei -zp8 -fpi87 -wcd=628) #-oi+
 
 set(CMAKE_C_FLAGS "-za99")
 set(CMAKE_CXX_FLAGS "-ze -za0x")
@@ -35,14 +36,14 @@ add_subdirectory(libraries)
 
 # Add the executable target
 add_executable(${PROJECT_NAME} ${SOURCES})
-target_link_libraries(${PROJECT_NAME} DOSGraphics DOSInput math rand DOSSound)
+target_link_libraries(${PROJECT_NAME} DOSGraphics DOSInput math rand DOSSound time)
 
 include_directories(include)
 
 if(DOSBOX_DEBUG)
-add_compile_definitions(DOSBOX)
+# add_compile_definitions(DOSBOX)
 add_compile_definitions(DEBUG_ENABLE_FUNCTIONS)
-add_compile_definitions(WORLD_OVERRIDE)
+# add_compile_definitions(WORLD_OVERRIDE)
 message("Compiling for debug on DOSBOX")
 else()
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD

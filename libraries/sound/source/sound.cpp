@@ -21,8 +21,14 @@ namespace Sound {
     }
 
     void tone(int channel, int frequency, int volume) {
-        if (channel < 0 || channel > 2 || frequency <= 0)
+        if (channel < 0 || channel > 2) {
             return;
+        }
+
+        if (frequency <= 0) {
+            outp(PSG_PORT, 0x90 | (channel << 5) | 0x0F);
+            return;
+        }
 
         // The PSG uses a 3.58 MHz clock, divide by 32 = ~111860 Hz input
         // Tone freq = Clock / (32 * N), so N = Clock / (32 * F)
