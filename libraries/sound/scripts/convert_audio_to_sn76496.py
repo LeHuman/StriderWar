@@ -79,47 +79,6 @@ def convert_to_psg_commands(path: str, channel: int, sample_rate_hz: float, volu
     wait_counter = 0
     last_cmd_index = 0
 
-    # Independent VOL and Freq commands
-    # for i in range(frames):
-    #     frame = y[i * hop: (i + 1) * hop]
-    #     amp = np.abs(frame).mean()
-    #     vol = amplitude_to_volume(amp)
-
-    #     try:
-    #         f0 = librosa.yin(frame, fmin=MIN_FREQ, fmax=MAX_FREQ, sr=sr)
-    #         freq = float(np.median(f0)) if len(f0) > 0 else 0.0
-    #     except Exception:
-    #         freq = 0.0
-
-    #     tone_n = hz_to_n(freq)
-    #     coarse = (tone_n >> 4) & 0x3F
-    #     fine = tone_n & 0x0F
-
-    #     command_changed = False
-
-    #     if tone_n != prev_freq:
-    #         commands.append(TONE_LATCH | (channel << 5) | fine)
-    #         commands.append(coarse)
-    #         prev_freq = tone_n
-    #         command_changed = True
-
-    #     if vol != prev_vol:
-    #         commands.append(TONE_VOL | (channel << 5) | (vol & 0x0F))
-    #         prev_vol = vol
-    #         command_changed = True
-
-    #     if command_changed:
-    #         if wait_counter > 0:
-    #             if last_cmd_index >= MAX_DATA_LEN:
-    #                 raise ValueError(f"Command index {last_cmd_index} exceeds 12-bit max of {MAX_DATA_LEN}.")
-    #             if wait_counter > MAX_WAIT_CYCLES:
-    #                 wait_counter = MAX_WAIT_CYCLES
-    #             rle.append((last_cmd_index << 4) | wait_counter)
-    #         last_cmd_index = len(commands)
-    #         wait_counter = 0
-    #     else:
-    #         wait_counter += 1
-
     for i in range(frames):
         frame = y[i * hop: (i + 1) * hop]
         amp = np.abs(frame).mean()
@@ -254,7 +213,8 @@ def main() -> None:
     parser.add_argument("input", help="Input audio file (wav, mp3, etc.)")
     parser.add_argument("channel", type=int, default=0, choices=[0, 1, 2], help="PSG channel (0, 1, or 2)")
     parser.add_argument("-o", "--output", type=Path, default=Path("."), help="Output directory")
-    parser.add_argument("-s", "--sample_rate", type=float, default=DEFAULT_SAMPLE_HZ, help="Rate in Hz to sample the audio file")
+    parser.add_argument("-s", "--sample_rate", type=float, default=DEFAULT_SAMPLE_HZ,
+                        help="Rate in Hz to sample the audio file")
     parser.add_argument("-v", "--volume", type=int, default=100, help="Volume multiplier out of 100")
 
     args = parser.parse_args()
@@ -277,11 +237,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-    # input_file = "pattern0.flac"
-    # channel = 0
-    # name = sanitize_name(input_file)
-
-    # psg_data, rle_data = convert_to_psg_commands(input_file, channel)
-    # if len(psg_data) > MAX_DATA_LEN:
-    #     raise ValueError(f"PSG data exceeds {MAX_DATA_LEN} bytes. Try trimming the audio.")
-    # write_cpp_file(name, psg_data, rle_data)
