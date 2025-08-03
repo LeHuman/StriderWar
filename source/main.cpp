@@ -31,10 +31,11 @@ const size_t temp_sound_hertz_x10 = 31;
 volatile int note = 0;
 volatile int vol = 0;
 
-struct PSGSong {
+struct PSGChannel {
     const uint8_t *data;
     const uint16_t *rle;
 
+    const size_t command_len;
     const size_t length;
     const size_t rle_length;
     const bool has_rle;
@@ -48,11 +49,11 @@ struct PSGSong {
     uint16_t current_index;
     uint16_t rle_index;
 
-    PSGSong(
+    PSGChannel(
         const uint8_t *data,
         const uint16_t *rle,
         const size_t &length,
-        const size_t &rle_length) : data(data), rle(rle), length(length), rle_length(rle_length), has_rle(rle_length > 0), wait(0, 0), current_index(0), rle_index(0) {
+        const size_t &rle_length, const bool is_noise) : data(data), rle(rle), command_len(is_noise ? 2 : 3), length(length), rle_length(rle_length), has_rle(rle_length > 0), wait(0, 0), current_index(0), rle_index(0) {
         reset();
     }
 
@@ -78,10 +79,12 @@ struct PSGSong {
                 wait.index = rle[rle_index] >> 4;
             }
         }
-        outp(0xC0, data[current_index]);
-        outp(0xC0, data[current_index + 1]);
-        outp(0xC0, data[current_index + 2]);
-        current_index += 3;
+
+        for (size_t i = 0; i < command_len; i++) {
+            outp(0xC0, data[current_index + i]);
+        }
+
+        current_index += command_len;
         current_index %= length;
 
         if (current_index == 0) {
@@ -90,9 +93,12 @@ struct PSGSong {
     }
 };
 
-PSGSong pattern0(SongData::Pattern0::data, SongData::Pattern0::rle, SongData::Pattern0::LEN, SongData::Pattern0::RLE_LEN);
-PSGSong pattern1(SongData::Pattern1::data, SongData::Pattern1::rle, SongData::Pattern1::LEN, SongData::Pattern1::RLE_LEN);
-PSGSong pattern2(SongData::Pattern2::data, SongData::Pattern2::rle, SongData::Pattern2::LEN, SongData::Pattern2::RLE_LEN);
+PSGChannel pattern0(SongData::Pattern0::data, SongData::Pattern0::rle, SongData::Pattern0::LEN, SongData::Pattern0::RLE_LEN, false);
+PSGChannel pattern1(SongData::Pattern1::data, SongData::Pattern1::rle, SongData::Pattern1::LEN, SongData::Pattern1::RLE_LEN, false);
+PSGChannel pattern2(SongData::Pattern2::data, SongData::Pattern2::rle, SongData::Pattern2::LEN, SongData::Pattern2::RLE_LEN, false);
+PSGChannel drum0(SongData::Drum0::data, SongData::Drum0::rle, SongData::Drum0::LEN, SongData::Drum0::RLE_LEN, true);
+PSGChannel drum1(SongData::Drum1::data, SongData::Drum1::rle, SongData::Drum1::LEN, SongData::Drum1::RLE_LEN, true);
+PSGChannel drum2(SongData::Drum2::data, SongData::Drum2::rle, SongData::Drum2::LEN, SongData::Drum2::RLE_LEN, true);
 
 bool swap = true;
 size_t note_count = 0;
@@ -100,6 +106,10 @@ size_t swap_count = 0;
 
 void interrupt temp_sound() {
     if ((tick % 5) == 0) {
+        drum0.step();
+        drum1.step();
+        drum2.step();
+
         if (swap) {
             pattern0.step();
         } else {

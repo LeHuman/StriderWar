@@ -1,0 +1,25 @@
+// Auto-generated PSG sound data
+#pragma once
+
+#include <stddef.h>
+#include <stdint.h>
+
+namespace Drum1 {
+
+    static const size_t LEN = 26;
+    static const size_t RLE_LEN = 6;
+
+    const uint8_t data[LEN] = {
+        // clang-format off
+        0xE1, 0xFF, 0xE2, 0xF8, 0xE3, 0xFF, 0xE4, 0xF6, 0xE4, 0xFF, 0xE4, 0xF8, 0xE2, 0xFF, 0xE6, 0xF7, 
+        0xE2, 0xFF, 0xE1, 0xF8, 0xE6, 0xFF, 0xE1, 0xF7, 0xE5, 0xF8, 
+        // clang-format on
+    };
+
+    const uint16_t rle[RLE_LEN] = {
+        // clang-format off
+        0x0001, 0x0041, 0x0083, 0x00C1, 0x010B, 0x0142, 
+        // clang-format on
+    };
+
+} // namespace Drum1
