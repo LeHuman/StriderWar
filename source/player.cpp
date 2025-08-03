@@ -34,7 +34,6 @@ void Player::reset() {
     ship.entity.color = 1;
 
     ship.reset();
-    
 
     for (size_t i = 0; i < MAX_BULLETS; i++) {
         bullets[i].entity.color = 3;
@@ -105,6 +104,15 @@ void Player::step() {
     // IMPROVE: Actually base thrust boost on orientation?
     Fixed ix = (Fixed)(input->x) / Fixed(300 - ship.mult.left_turn);
     Fixed iy = (Fixed)(input->y) / Fixed(300 - ship.mult.right_turn);
+
+    // TODO: Fix Fixed implementation, there seems to be an offset against positive numbers
+    if (ix > 0) {
+        ix += 0.08f;
+    }
+
+    if (iy > 0) {
+        iy += 0.08f;
+    }
 
     ship.entity.pulse(ix, iy);
 
