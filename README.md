@@ -28,6 +28,7 @@ This project is more so an exercise in developing under a different set of const
 
 ## Demo
 
+<!-- DEMO -->
 ![Demo](images/demo.gif)\
 *Running on DOSBOX-X (So a bit faster than normal)*
 
