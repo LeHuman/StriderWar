@@ -22,9 +22,11 @@ This is a game developed for the [IBM PC Jr](https://en.wikipedia.org/wiki/IBM_P
 
 ### Why
 
+<!-- WHY START -->
 I was always curious in developing for vintage hardware. I recently came across a cheap IBM PC Jr setup and decided to make something for it. Although there are more ways to squeeze way more out of this already underpowered machine, I decided to stick with a DOS app written in Watcom C++.
 
 This project is more so an exercise in developing under a different set of constraints from what I am used to.
+<!-- WHY END -->
 
 ## Demo
 
