@@ -7,7 +7,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 # Specify the target system as DOS
 set(CMAKE_SYSTEM_NAME DOS)
 # TODO: Build both versions
-set(DOSBOX_DEBUG ON)
+set(DOSBOX_DEBUG OFF)
 
 # -bt=dos : Compile for DOS
 # -mm : Medium Memory model

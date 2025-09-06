@@ -323,7 +323,7 @@ int main() {
     bool enable_joystick = false;
     bool enable_keyboard = false;
 
-    Time::ISR::initialize(temp_sound, temp_sound_hertz_x10);
+    // Time::ISR::initialize(temp_sound, temp_sound_hertz_x10);
 
     while (true) {
         if (DOS::Input::Keyboard::exit_requested) {
