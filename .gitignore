@@ -2,5 +2,6 @@ build
 help.txt
 dev
 watcom-wiki
+/*.flac
 
 __pycache__
