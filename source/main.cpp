@@ -19,7 +19,6 @@
 #include "sprite_map.hpp"
 #include "world.hpp"
 
-static uint8_t total_bullets = 0;
 static uint16_t sound_down = 0;
 static uint16_t sound_blap = 0;
 static uint16_t sound_crrsh = 0;
@@ -103,12 +102,22 @@ PSGChannel drum2(SongData::Drum2::data, SongData::Drum2::rle, SongData::Drum2::L
 bool swap = true;
 size_t note_count = 0;
 size_t swap_count = 0;
+bool no_sound = false;
+bool play_song = true;
+bool play_stop = false;
 
 void interrupt temp_sound() {
-    if ((tick % 5) == 0) {
-        drum0.step();
-        drum1.step();
-        drum2.step();
+
+    if (sound_freq > 50) {
+        DOS::Sound::tone(1, sound_freq, 4);
+        no_sound = false;
+    } else if (!no_sound) {
+        no_sound = true;
+        DOS::Sound::tone(1, 0, 0);
+    }
+
+    if (play_song && ((tick % 5) == 0)) {
+        play_stop = false;
 
         if (swap) {
             pattern0.step();
@@ -132,23 +141,33 @@ void interrupt temp_sound() {
         }
     }
 
+    if (!play_song && !play_stop) {
+        play_stop = true;
+        DOS::Sound::silence();
+    }
+
     ++tick;
     outp(0x20, 0x20);
 }
 
-inline void temp_handle_sound(Player &playerA, Player &playerB) {
-    if ((playerA.enabled_bullets + playerB.enabled_bullets) != total_bullets) {
-        if ((playerA.enabled_bullets + playerB.enabled_bullets) > total_bullets) {
-            sound_down = 800;
+inline void temp_handle_sound(const Player &playerA, const Player &playerB) {
+    static uint16_t total_bullets = 0;
+    size_t current_bullets = playerA.enabled_bullets + playerB.enabled_bullets;
+
+    if (current_bullets != total_bullets) {
+        if (current_bullets > total_bullets) {
+            sound_down = 500;
             silent = false;
-        } else if ((playerA.enabled_bullets + playerB.enabled_bullets) == 0) {
-            sound_down /= 2;
+        } else if (current_bullets == 0) {
+            if (sound_down) {
+                sound_down /= 2;
+            }
         }
-        if ((playerA.enabled_bullets + playerB.enabled_bullets) < total_bullets) {
+        if (current_bullets < total_bullets) {
             sound_crrsh = 60;
             silent = false;
         }
-        total_bullets = playerA.enabled_bullets + playerB.enabled_bullets;
+        total_bullets = current_bullets;
     }
 
     if (!sound_blap && (playerA.bounced || playerA.bounced || playerB.bounced || playerB.bounced)) {
@@ -172,21 +191,25 @@ inline void temp_handle_sound(Player &playerA, Player &playerB) {
         sound_crrsh = 0;
     }
 
-    if (sound_crrsh) {
+    if (sound_crrsh > 10) {
         sound_freq = sound_crrsh;
-    } else if (sound_down) {
+    } else if (sound_down > 10) {
         sound_freq = sound_down;
-    } else if (sound_blap) {
+    } else if (sound_blap > 10) {
         sound_freq = sound_blap;
     } else if (!silent) {
-        nosound();
         silent = true;
         sound_freq = 0;
     }
 
-    if (sound_freq) {
-        sound(sound_freq);
+    if (sound_freq < 50) {
+        sound_freq = 0;
     }
+
+    if (sound_freq > 4000) {
+        sound_freq = 4000;
+    }
+
 }
 
 void temp_set_sprite(Player::status &status, size_t sprite_id) {
@@ -323,11 +346,15 @@ int main() {
     bool enable_joystick = false;
     bool enable_keyboard = false;
 
-    // Time::ISR::initialize(temp_sound, temp_sound_hertz_x10);
+    Time::ISR::initialize(temp_sound, temp_sound_hertz_x10);
 
     while (true) {
         if (DOS::Input::Keyboard::exit_requested) {
             break;
+        }
+
+        if (DOS::Input::Keyboard::mute_requested) {
+            play_song = !play_song;
         }
 
         if (DOS::Input::Keyboard::save_requested) {
@@ -428,7 +455,6 @@ int main() {
             }
         }
 
-        // FIXME: Not working on hardware?
         temp_handle_sound(playerA, playerB);
         temp_set_sprites(playerA, playerB);
 

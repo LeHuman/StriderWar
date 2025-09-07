@@ -145,6 +145,8 @@ void Player::step() {
 
     size_t disabled = 0;
 
+    enabled_bullets = 0;
+
     for (size_t i = 0; i < MAX_BULLETS; i++) {
         Bullet &bullet = bullets[i];
 
@@ -160,7 +162,6 @@ void Player::step() {
             fire = false;
             bullet.loaded = false;
             bullet.entity.enabled = true;
-            ++enabled_bullets;
             bullet.entity.x = ship.entity.x;
             bullet.entity.y = ship.entity.y;
             bullet.entity.vx = ship.entity.vx * (world::bullet_speed * bullet.mult.speed);
@@ -176,10 +177,10 @@ void Player::step() {
             bullet.entity.bounce.x = false;
             bullet.entity.bounce.y = false;
             bullet.entity.enabled = false;
-            --enabled_bullets;
             world::explode(bullet);
         }
 
+        enabled_bullets += bullet.entity.enabled;
         situation->bullet[i].indicator.set((bullet.loaded && !bullet.entity.enabled) ? P_SS_GOOD : P_SS_FAIR);
     }
 

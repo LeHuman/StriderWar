@@ -14,6 +14,7 @@ namespace Input {
 
         State playerA;
         State playerB;
+        bool mute_requested = false;
         bool exit_requested = false;
         bool save_requested = false;
         bool bot_requested = false;
@@ -74,6 +75,9 @@ namespace Input {
                     break;
                 case 0x30: // B
                     bot_requested = !is_release;
+                    break;
+                case 0x32: // M
+                    mute_requested = !is_release;
                     break;
                 default:
                     break;

@@ -22,7 +22,7 @@ set(DOSBOX_DEBUG OFF)
 # -zp8 : struct packing align 8
 # -fpi87 : fpi87 inline 80x87
 # -wcd=628 : Ignore "expression is not meaningful" for compiled out functions
-add_compile_options(-bt=dos -mm -0 -d0 -zq -fr=nul -xd -onasx -s -oi+ -oh -ei -zp8 -fpi87 -wcd=628) #-oi+
+add_compile_options(-bt=dos -mm -0 -d0 -zq -fr=nul -xd -onasx -s -oh -ei -zp8 -fpi87 -wcd=628) #-oi+
 
 set(CMAKE_C_FLAGS "-za99")
 set(CMAKE_CXX_FLAGS "-ze -za0x")

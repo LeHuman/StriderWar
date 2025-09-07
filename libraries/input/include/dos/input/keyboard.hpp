@@ -34,6 +34,7 @@ namespace Input {
         extern bool save_requested;
         extern bool reset_requested;
         extern bool bot_requested;
+        extern bool mute_requested;
 
         void interrupt new_isr();
 
@@ -44,6 +45,7 @@ namespace Input {
             save_requested = false;
             reset_requested = false;
             bot_requested = false;
+            mute_requested = false;
             old_isr = _dos_getvect(0x09); // Backup original ISR
             _dos_setvect(0x09, new_isr);  // Set our custom handler
         }
